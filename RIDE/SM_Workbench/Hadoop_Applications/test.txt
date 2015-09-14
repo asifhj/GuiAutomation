@@ -1,0 +1,55 @@
+*** Settings ***
+Library           Collections
+Library           OperatingSystem
+Library           String
+Library           Selenium2Library
+Library           MyJD
+
+*** Test Cases ***
+Test
+    [Tags]    ttt
+    Selenium2Library.Open Browser    http://www.hirist.com/k/python-jobs-9.html    firefox
+    Selenium2Library.Wait Until Page Contains    Now you can apply to multiple jobs with a single click. Try it!
+    #Scroll Page To Location    0    2000
+    Create File    jrows.csv
+    : FOR    ${row}    IN RANGE    1    100
+    \    Run Keyword If    ${row}>=2    Exit For Loop
+    \    ${jId}=    Selenium2Library.Get Element Attribute    xpath=//*[@id="listingPanel"]/div[4]/div[${row}]@data-jobid
+    \    ${jHref}=    Selenium2Library.Get Element Attribute    xpath=//*[@id="listingPanel"]/div[4]/div[${row}]/div[1]/div[3]/span/a@href
+    \    ${jDesc}=    Selenium2Library.Get Text    xpath=//*[@id="listingPanel"]/div[4]/div[${row}]/div[1]/div[3]/span/a
+    \    ${jLocation}=    Selenium2Library.Get Text    xpath=//*[@id="listingPanel"]/div[4]/div[${row}]/div[2]/div[1]/span
+    \    ${jOpenDate}=    Selenium2Library.Get Text    xpath=//*[@id="listingPanel"]/div[4]/div[${row}]/div[2]/div[2]/span
+    \    Selenium2Library.Go To    ${jHref}
+    \    Sleep    1
+    \    Selenium2Library.Wait Until Page Contains    Posted by
+    \    ${postedJDesc}=    Selenium2Library.Get Text    xpath=//*[@id="page-content-wrapper"]/div[6]/div[3]/div[2]
+    \    ${postedByHref}=    Selenium2Library.Get Element Attribute    xpath=//*[@id="jobrecinfo"]/span[1]/a@href
+    \    ${pc}=    Selenium2Library.Execute Javascript    return window.jQuery("/html/body/div[3]/div[3]/div[6]/div[7]/div[1]/div[3]/span[3]/small").val();
+    Selenium2Library.Close Browser
+
+as
+    \    ${postedCategory}=    Selenium2Library.Get Text    xpath=//*[@id="jobrecinfo"]/span[2]/a
+    \    ${postedJCode}=    Get Inner Html    xpath=/html/body/div[3]/div[3]/div[6]/div[7]/div[1]/div[3]/span[3]
+    \    ${postedJViews}=    Selenium2Library.Get Text    xpath=//*[@id="jobrecinfo"]/span[6]/b
+    \    ${postedJApplications}=    Selenium2Library.Get Text    xpath=//*[@id="jobrecinfo"]/span[7]/b
+    \    ${postedActions}=    Selenium2Library.Get Text    xpath=//*[@id="jobrecinfo"]/span[8]
+    \    Sleep    2
+    \    Selenium2Library.Go To    ${postedByHref}
+    \    ${linkedInExist} =    Get Matching Xpath Count    //*[@id="page-content-wrapper"]/div[6]/div[1]/div[3]/h4/a
+    \    ${postedlinkedInURL}=    Run Keyword If    ${linkedInExist}>0    Element Exists    //*[@id="page-content-wrapper"]/div[6]/div[1]/div[3]/h4/a@href    ELSE
+    \    ...    NA
+    \    #${postedBusinessURL}=    Get Element Attribute    //*[@id="page-content-wrapper"]/div[6]/div[1]/div[3]/h4/a@href
+    \    Selenium2Library.Go Back
+    \    Sleep    2
+    \    Selenium2Library.Go Back
+
+*** Keywords ***
+Element Exists
+    [Arguments]    ${xpath}
+    [Documentation]    Determines if the desired element exists
+    ${linkedInURL}=    Get Element Attribute    ${xpath}
+    [Return]    ${linkedInURL}
+
+Scroll Page To Location
+    [Arguments]    ${x_location}    ${y_location}
+    Execute JavaScript    window.scrollTo(${x_location},${y_location})

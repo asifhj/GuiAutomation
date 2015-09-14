@@ -1,0 +1,27 @@
+*** Settings ***
+Library           ImpalaDatabaseLibrary
+Library           Selenium2Library
+Library           Collections
+Library           OperatingSystem
+Library           MyLibrary
+Library           String
+Library           DatabaseLibrary
+
+*** Test Cases ***
+ConnectToImpala
+    [Tags]    my
+    Connect To Impala Database    172.22.147.240    27003    parseattachments
+    ${version}=    Impala Get Version
+    Log    ${version}
+    @{dbs}=    Impala Get Databases
+    Log Many    @{dbs}
+    ${exists}=    Impala Check If Database Exists    parseattachments
+    Log    ${exists}
+    ${cur_db}=    Impala Get Current Database
+    Log    ${cur_db}
+    ${tables}=    Impala Get Tables    parseattachments
+    Log Many    ${tables}
+    @{rows}=    Impala Query    SELECT * FROM re_data LIMIT 100
+    Log Many    @{rows}
+    ${rowcount}=    Impala Row Count    SELECT * FROM re_data LIMIT 100
+    Log    ${rowcount}

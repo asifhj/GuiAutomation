@@ -1,0 +1,191 @@
+*** Settings ***
+Library           Selenium2Library
+Library           Collections
+Library           OperatingSystem
+Library           MyLibrary
+Library           String
+Library           EmailLibrary
+
+*** Test Cases ***
+Login to SM Workbench
+    Close All Browsers
+    Selenium2Library.Open Browser    http://d-jss-app.jnpr.net:50080/jss-ciat/app/home    firefox
+    Comment    Maximize Browser Window
+    Input Text    j_username    demo
+    Input Password    j_password    demo
+    Click Button    submit
+    Page Should Contain    Welcome
+
+Navigate to SM Workbench Page
+    Mouse Over    externalNav
+    Click Element    xpath=//li[@id="smWorkbenchNav"]/a
+    sleep    5
+    #Page Should Contain    Account Selector
+    Page Should Contain    Show Inventory
+    Page Should Contain    Entitlement Information
+    Page Should Contain    Inventories
+
+Verify tabs loading
+    Select Frame    id=smWorkbenchPage
+    Input Text    xpath=//input[starts-with(@id, 'fl-')]    Juniper-IT
+    Click Element    xpath=//input[starts-with(@id, 'fl-')]
+    sleep    3
+    Click Element    xpath=//ul/li[starts-with(@id, 'item')]
+    Element Should Be Visible    //button[starts-with(@class, 'md-raised')]/span[contains(text(), "Show Inventory")]
+    Click Element    //button[starts-with(@class, 'md-raised')]/span[contains(text(), "Show Inventory")]
+    Sleep    3
+    Element Should Be Visible    //button[starts-with(@class, 'md-raised')]/span[contains(text(), "Export Inventory")]
+    ${firstVal}=    Get Text    //md-tab-item[1][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
+    ${seconVal}=    Get Text    //md-tab-item[2][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
+    ${thirdVal}=    Get Text    //md-tab-item[3][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
+    ${fourthVal}=    Get Text    //md-tab-item[4][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
+    Should Be Equal    ${firstVal}    ENTITLEMENT ANALYSIS
+    Should Be Equal    ${seconVal}    INVENTORY
+    Should Be Equal    ${thirdVal}    FRU TO CHASSIS MAP
+    Should Be Equal    ${fourthVal}    SOFTWARE ANALYSIS
+
+Verify Entitlement Information
+    Click Element    //md-tab-item[2][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
+    Sleep    5
+    Click Element    //md-tab-item[1][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
+    Sleep    5
+    ${product}=    Get Text    //table[@class='ng-isolate-scope tr-ng-grid table table-bordered table-hover' and @tr-ng-grid='one']/thead/tr/th[1]//div[@class='tr-ng-title ng-binding']
+    ${baseName}=    Get Text    //table[@class='ng-isolate-scope tr-ng-grid table table-bordered table-hover' and @tr-ng-grid='one']/thead/tr/th[2]//div[@class='tr-ng-title ng-binding']
+    ${count}=    Get Text    //table[@class='ng-isolate-scope tr-ng-grid table table-bordered table-hover' and @tr-ng-grid='one']/thead/tr/th[3]//div[@class='tr-ng-title ng-binding']
+    Sleep    2
+    Should Be Equal    ${product}    Product
+    Should Be Equal    ${baseName}    Base Name
+    Should Be Equal    ${count}    Count
+    ${contractID}=    Get Text    //table[@class='ng-isolate-scope tr-ng-grid table table-bordered table-hover' and @tr-ng-grid='two']/thead/tr/th[1]//div[@class='tr-ng-title ng-binding']
+    ${serialNumber}=    Get Text    //table[@class='ng-isolate-scope tr-ng-grid table table-bordered table-hover' and @tr-ng-grid='two']/thead/tr/th[2]//div[@class='tr-ng-title ng-binding']
+    ${sku}=    Get Text    //table[@class='ng-isolate-scope tr-ng-grid table table-bordered table-hover' and @tr-ng-grid='two']/thead/tr/th[3]//div[@class='tr-ng-title ng-binding']
+    ${skuClass}=    Get Text    //table[@class='ng-isolate-scope tr-ng-grid table table-bordered table-hover' and @tr-ng-grid='two']/thead/tr/th[4]//div[@class='tr-ng-title ng-binding']
+    ${product}=    Get Text    //table[@class='ng-isolate-scope tr-ng-grid table table-bordered table-hover' and @tr-ng-grid='two']/thead/tr/th[5]//div[@class='tr-ng-title ng-binding']
+    ${status}=    Get Text    //table[@class='ng-isolate-scope tr-ng-grid table table-bordered table-hover' and @tr-ng-grid='two']/thead/tr/th[6]//div[@class='tr-ng-title ng-binding']
+    Should Be Equal    ${contractID}    Contract Id
+    Should Be Equal    ${serialNumber}    Serial Number
+    Should Be Equal    ${sku}    SKU
+    Should Be Equal    ${skuClass}    SKU Classification
+    Should Be Equal    ${product}    Product
+    Should Be Equal    ${status}    Status
+
+Verify Filtering based on Product
+    Input Text    //table[@class='ng-isolate-scope tr-ng-grid table table-bordered table-hover' and @tr-ng-grid='one']//th[1]//input    EX4200-24F
+    ${product}=    Get Text    //table[@class='ng-isolate-scope tr-ng-grid table table-bordered table-hover' and @tr-ng-grid='one']//tbody/tr/td[1]
+    ${baseName}=    Get Text    //table[@class='ng-isolate-scope tr-ng-grid table table-bordered table-hover' and @tr-ng-grid='one']//tbody/tr/td[2]
+    ${count}=    Get Text    //table[@class='ng-isolate-scope tr-ng-grid table table-bordered table-hover' and @tr-ng-grid='one']//tbody/tr/td[3]
+    Click Button    //button[@class = 'btn btn-primary ng-scope' and contains(text(),'Details')]
+    Sleep    3
+    ${count}=    Set Variable    ${count}
+    ${cols}=    Set Variable    5
+    ${table}    Set Variable    xpath=//table[@class='ng-isolate-scope tr-ng-grid table table-bordered table-hover' and @tr-ng-grid='two']
+    : FOR    ${row}    IN RANGE    2    ${count}+1
+    \    ${contents}    Get Table Cell    ${table}    ${row}    ${cols}
+    \    Log    ${contents}
+    \    Should Be Equal    ${contents}    ${baseName}
+
+Verify Graph
+    Comment    Mouse Over    //*/div[@id='pieChart']
+    Sleep    3
+    Comment    Selenium2Library.Wait Until Element Is Visible    xpath=/html/body/div/div/div/div[2]/div/div/div/div[2]/adf-widget-content/md-tabs/md-tabs-content-wrapper/md-tab-content[1]/div/md-content/div[2]/div[1]/div[1]/svg
+    ${entitleInfo}=    Get Element Attribute    xpath= //*/div[@id='pieChart']/*[name()='svg']/*[name()='g']/*[name()='g']/*[name()='path']@fill
+    Log    ${entitleInfo}    WARN
+    Should Be Equal    ${entitleInfo}    ACTIVE: 100%
+    Comment    ${totalActive}=    Get Text    xpath=//*/div[@id='pieChart']/*[name()='svg']/*[name()='g']/*[name()='g']/*[name()='text']
+    Should Be Equal    ${totalActive}    ACTIVE(1219)
+    ${bar}=    Set Variable    31
+    : FOR    ${count}    IN RANGE    ${bar}+1
+    \    ${number}=    Get Text    //div[@id='barChart']//*[local-name() = 'svg']/*[name()='g'][1]/*[name()='text'][${count}]
+    \    ${model}=    Get Text    //div[@id='barChart']//*[local-name() = 'svg']/*[name()='g'][2]/*[name()='text'][${count}]
+    \    ${LOG_FILE}    ${model}    ${number}
+
+View Inventory For Account
+    Click Element    //md-tab-item[2][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
+    Sleep    5
+    ${headerCount}=    Get Matching Xpath Count    //table[@items='inventories']/thead/tr/th
+    #Should Be Equal    ${headerCount}    10
+    ${col1}=    Get Text    //table[@items='inventories']/thead/tr/th[1]/div/div/div[1]
+    ${col2}=    Get Text    //table[@items='inventories']/thead/tr/th[2]/div/div/div[1]
+    ${col3}=    Get Text    //table[@items='inventories']/thead/tr/th[3]//div[@class='tr-ng-title ng-binding']
+    ${col4}=    Get Text    //table[@items='inventories']/thead/tr/th[4]//div[@class='tr-ng-title ng-binding']
+    ${col5}=    Get Text    //table[@items='inventories']/thead/tr/th[5]//div[@class='tr-ng-title ng-binding']
+    ${col6}=    Get Text    //table[@items='inventories']/thead/tr/th[6]//div[@class='tr-ng-title ng-binding']
+    ${col7}=    Get Text    //table[@items='inventories']/thead/tr/th[7]//div[@class='tr-ng-title ng-binding']
+    ${col8}=    Get Text    //table[@items='inventories']/thead/tr/th[8]//div[@class='tr-ng-title ng-binding']
+    ${col9}=    Get Text    //table[@items='inventories']/thead/tr/th[9]//div[@class='tr-ng-title ng-binding']
+    ${col10}=    Get Text    //table[@items='inventories']/thead/tr/th[10]//div[@class='tr-ng-title ng-binding']
+    Should Be Equal    ${col1}    Device Name
+    Should Be Equal    ${col2}    Module
+    Should Be Equal    ${col3}    Sub_Module
+    Should Be Equal    ${col4}    Sub_Sub_Module
+    Should Be Equal    ${col5}    Sub_Sub_Sub_Module
+    Should Be Equal    ${col6}    Part Number
+    Should Be Equal    ${col7}    Model Number
+    Should Be Equal    ${col8}    Serial Number
+    Should Be Equal    ${col9}    Revision
+    Should Be Equal    ${col10}    Description
+
+Inventory Validation
+    sleep    4
+    ${table}=    Get Table Cell    xpath=//table[starts-with(@items,"inventories")]    1    1
+    log    ${table}
+    #Number of rows and columns
+    ${rows}=    Get Matching Xpath Count    //table[@items='inventories' and @fields="config.visibleColumns['inventory'].selected"]/thead/tr/th[1]/div/div/div[1]
+    ${cols}=    Get Matching Xpath Count    //table[@items='inventories' and @fields="config.visibleColumns['inventory'].selected"]/thead/tr/th
+    ${cols}=    Set Variable    10
+    ${rows}=    Set Variable    10
+    log    Row Count = ${rows}    WARN
+    log    Col Count = ${cols}    WARN
+    Click Element    xpath=/html/body/div/div/div/div[2]/div/div/div/div[2]/adf-widget-content/md-tabs/md-tabs-content-wrapper/md-tab-content[2]/div/md-content/div[2]/md-content/div/table/tfoot/tr/td/div/div/div/span[3]/ul/li[6]/a
+    Sleep    3
+    ${total}=    Get Text    xpath=//*[@id="tab-content-002"]/div/md-content/div[2]/md-content/div/table/tfoot/tr/td/div/div/div/span[3]/ul/li[8]/span[2]/span
+    ${total}=    Get Substring    ${total}    2    -9
+    Log    ${total}    WARN
+    ${total}=    Evaluate    ${total}/10
+    Log    ${total}    WARN
+    Create File    WebTestingInventoryTmp.csv
+    Append To File    WebTestingInventoryTmp.csv    [u'Device Name', u'Module', u'Sub_Module', u'Sub_Sub_Module', u'Sub_Sub_Sub_Module', u'Part Number', u'Revision', u'Model Number', u'Serial Number', u'Description']
+    : FOR    ${row}    IN RANGE    1    ${total}
+    \    getTableRow
+    \    Run Keyword If    ${row}>=2    Exit For Loop
+    \    Click Element    xpath=/html/body/div/div/div/div[2]/div/div/div/div[2]/adf-widget-content/md-tabs/md-tabs-content-wrapper/md-tab-content[2]/div/md-content/div[2]/md-content/div/table/tfoot/tr/td/div/div/div/span[3]/ul/li[6]/a
+    \    Sleep    3
+    Copy File    D:\\GuiAutomation\\RIDE\\SM_Workbench\\Hadoop_Applications\\WebTestingInventoryTmp.csv    C:\\tmp\\WebTesting\\
+    Prepare File For Inventory Mapping    WebTestingInventoryTmp.csv
+    Compare Inventory    WebTestingInventory.csv
+
+Logout and Close
+    Unselect Frame
+    Click Link    xpath=/html/body/div[2]/div/table/tbody/tr[2]/td/a
+    Wait Until Page Contains    Login    timeout=10
+    Close Browser
+
+SendMail
+    Prepare Report For Email    Juniper    C:/tmp
+    Send Mail With Attachment    pbiswas@juniper.net    pbiswas@juniper.net    Automation Test Results    Please find the attached results    C:/tmp/RIDE-report.zip
+
+*** Keywords ***
+getTableRow
+    sleep    4
+    ${table}=    Get Table Cell    xpath=//table[starts-with(@items,"inventories")]    1    1
+    #Number of rows and columns
+    ${rows}=    Get Matching Xpath Count    //table[@items='inventories' and @fields="config.visibleColumns['inventory'].selected"]/thead/tr/th[1]/div/div/div[1]
+    ${cols}=    Get Matching Xpath Count    //table[@items='inventories' and @fields="config.visibleColumns['inventory'].selected"]/thead/tr/th
+    ${cols}=    Set Variable    10
+    ${rows}=    Set Variable    10
+    log    Row Count = ${rows}    WARN
+    log    Col Count = ${cols}    WARN
+    ${table}=    Set Variable    xpath=//table[starts-with(@items,"inventories")]
+    : FOR    ${row}    IN RANGE    1    ${rows}+2
+    \    @{contents}=    getCellValue    ${row}    ${cols}    ${table}
+    \    Log List    ${contents}
+    \    Append To File    WebTestingInventoryTmp.csv    ${contents}[0]
+    \    Append To File    WebTestingInventoryTmp.csv    "\n"
+
+getCellValue
+    [Arguments]    ${row}    ${cols}    ${table}
+    @{rowContent}=    Create List
+    : FOR    ${col}    IN RANGE    1    ${cols}+1
+    \    ${val}=    Get Table Cell    ${table}    ${row}    ${col}
+    \    Append To List    ${rowContent}    ${val}
+    Return From Keyword    @{rowContent}

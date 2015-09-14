@@ -1,0 +1,95 @@
+*** settings ***
+Library           Collections
+Library           String    #Library    requests
+Library           OperatingSystem
+Library           String
+Library           json
+Library           MyLibrary
+Library           Selenium2Library
+Library           requests
+Library           EmailLibrary
+
+*** test cases ***
+Get Account Name
+    [Tags]    rest    rest1
+    @{accounts}=    Get NewAccounts
+    ${headers}=    Get Headers
+    ${data}=    Create Dictionary    customer    DANTE
+    ${response}=    Get Account Names    http://172.22.147.244:8090/smworkbench/accounts/names    ${data}    ${headers}
+    Should Be Equal    ${response.status_code}    ${200}
+    @{response_accounts}=    Json To List    ${response}
+    : FOR    ${response_account}    IN    @{response_accounts}
+    \    Log    ${response_account}
+    \    List Should Contain Value    @{accounts}__    ${response_account}    "Account does not exist!"
+
+Get Inventory
+    [Tags]    rest    rest1
+    ${data}=    Create Dictionary    customer    DANTE    customerUUID    None    category
+    ...    inventory    startRow    0    endRow    0    filterModel
+    ...    None    sortModel    None    pageItems    1    lastRecord
+    ...    None    firstRecord    None    previousStartRow    0    previousEndRow
+    ...    0    fetchNestedInventories    true
+    ${headers}=    Get Headers
+    ${params}=    Create Dictionary
+    ${response}=    Get Account Inventory    http://hdpstpsvc10.jnpr.net:8090/smworkbench/inventory/customer/inventories    data=${data}    headers=${headers}    params=${params}
+    Should Be Equal As Strings    ${response.status_code}    200
+    #Log    ${response.text}
+
+Get FRU To Chassis Map
+    [Tags]    rest    rest2
+    ${data}=    Create Dictionary    customer    DANTE    customerUUID    None    category
+    ...    fru_chassis_map    startRow    0    endRow    0    filterModel
+    ...    None    sortModel    None    pageItems    1    lastRecord
+    ...    None    firstRecord    None    previousStartRow    0    previousEndRow
+    ...    0    fetchNestedInventories    true
+    ${headers}=    Get Headers
+    ${params}=    Create Dictionary
+    ${response}=    Get Account FruToChassisMap    http://hdpstpsvc10.jnpr.net:8090/smworkbench/inventory/customer/inventories    data=${data}    headers=${headers}    params=${params}
+    Should Be Equal As Strings    ${response.status_code}    200
+
+Get Software Analysis Map
+    [Tags]    rest    rest5
+    ${data}=    Create Dictionary    customer    DANTE    customerUUID    None    category
+    ...    software_analysis    startRow    0    endRow    0    filterModel
+    ...    None    sortModel    None    pageItems    1000    lastRecord
+    ...    None    firstRecord    None    previousStartRow    0    previousEndRow
+    ...    0    fetchNestedInventories    true
+    ${headers}=    Get Headers
+    ${params}=    Create Dictionary
+    ${response}=    Get Account Software Analysis    http://172.22.147.244:8090/smworkbench/software/customer/softwares    data=${data}    headers=${headers}    params=${params}
+    Should Be Equal As Strings    ${response.status_code}    200
+
+SendMail
+    Prepare Report For Email    asifj    C:/tmp
+    Comment    Send Mail With Attachment    pbiswas@juniper.net    pbiswas@juniper.net    Automation Test Results    Please find the attached results    C:/tmp/RIDE-report.zip
+
+*** Keywords ***
+Get OldAccounts
+    [Documentation]    This keyword returns list.
+    @{names}    Create List    Juniper-IT    RIO TINTO    NGA - NATIONAL GEOSPATIAL-INTELLIGENCE AGENCY    SATEC TUNISIE - CEJ495878    SOUTHWEST POWER POOL (SPP) - CEJ537080
+    ...    MGM MIRAGE - CEJ536487    MGM \ GRAND DETROIT II    NORTH-WEST TELECOM    ARVIN MERITOR    SCANSOURCE, \ INC - 7737    PHILIP MORRIS KOREA INC
+    ...    PFIZER INC    BIMAN BANGLADESH AIRLINES    WORCESTER POLYTECHNIC INSTITUTE    BANK OF MONTREAL    SUNESYS    T-SYSTEMS SCHWEIZ AG
+    ...    XON HOLDINGS (PTY) LTD - 10280    BANK OF \ MONTREAL    DEPAUL UNIVERSITY - CHICAGO    IBM Deutschland GmbH    MIDLAND INSURANCE    Lawrence Berkeley Labs
+    ...    DEFENCE RESEARCH & DEVELOPMENT ORGANIZATION    NOKIA,INC \ EP611184    METNET COMMUNICATIONS - SAN FRANCISCO    SYNIVERSE    FRANKLIN AMERICAN    BANK OF AMERICA / MERRILL LYNCH
+    ...    LTE-BALTIMORE    METLIFE    METLIFE PASADENA    ACCUVANT INC - 5819    METLIFE - WATERFORD    SWISSCOM
+    ...    NETSECURITY SYSTEMS    LINX    CSSS CHARLEVOIX-LA MALBAIE    SKANDINAVISKA ENSKILDA BANKEN AB-STOCKHOLM    DANTE    GAO
+    ...    GUANGDONG TELECOMMUNICATIONS    CITIGROUP C/O AT&T    NSN VODAFONE AUSTRALIA    CITIGROUP C/O AT&T NASSAU    GENERAL DYNAMCIS    SWISSCOM (SCHWEIZ) AG
+    ...    CARLI    CITIGROUP C/O AT&T-SAN JOSE    MARIN IT    ALIANT TELECOM - NL    ALIANT TELECOM-NS    NEW WORLD TELECOM HK - NSN
+    ...    FIDELITY NATIONAL INFORMATION SERVICES, INC    SIEMENS OSAKEYH10    ROGERS    LOTTOMATICA - CEJ42932    TELEKOM MALAYSIA BERHAD    PRUDENTIAL INSURANCE
+    ...    HQ KFOR    SINGAPORE TELECOM JAPAN    NATO HQ - BRUSSELS    PACNET GLOBAL (SINGAPORE) PTE LTD    PACNET    JUNIPER NETWORKS - 1-1FAQ-107
+    ...    JUNTA DE ANDALUCIA    ASIA NETCOM CORPORATION    NOMURA SECURITIES INTL INC    SPRINT PCS    DEPARTMENT OF COMMERCE    JMA INFORMATION TECHNOLOGY - CEJ456075
+    ...    NATO CIS SCHOOL LATINA    MOBILY-RIYADH    MTN NETWORK SOLUTIONS    TDC SUNRISE    TLC IT GROUP - CEJ15933    WWT TELCOBUY WAREHOUSE
+    ...    ALLIANZ CP GENERAL    UNIVERSITY OF EXETER    CTBC TELECOM - CE0047845    ORANGE - CE0522249    FLEXITY SOLUTIONS INC    IBM TSS -- TORONTO
+    Return From Keyword    @{names}
+
+Get NewAccounts
+    [Documentation]    This keyword returns list.
+    @{names}    Create List    NATIONAL WEATHER SERVICE - INDIANAPOLIS    COMPUTER SCIENCE CORPORATION    DANTE    TELNEXT DO BRASIL COMERCIO E MANUTE NCAO DE EQUIPAMENTOS ELETRO ELETRON ICOS LTDA    ALLIED TELESIS K.K.
+    ...    Customer-Care team    NATIONAL WEATHER SERVICE - INDIANAPOLIS    XTST    Comcast    Comcast    None
+    ...    test
+    Return From Keyword    @{names}
+
+Get Headers
+    [Documentation]    This keyword returns list.
+    ${headers}=    Create Dictionary    content-type    application/json
+    Return From Keyword    ${headers}

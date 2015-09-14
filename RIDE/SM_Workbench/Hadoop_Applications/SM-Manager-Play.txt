@@ -1,0 +1,188 @@
+*** Settings ***
+Library           Selenium2Library
+Library           Collections
+Library           OperatingSystem
+Library           String
+Library           MyLibrary
+
+*** Test Cases ***
+Mapping Test
+    [Tags]    mapping
+    Prepare File For Inventory Mapping    example.csv
+    Prepare File For Mailing    asifj    c:\tmp
+
+TestCase 1
+    Selenium2Library.Open Browser    https://10.204.31.222/mainui/
+    Input Text    j_screen_username    super
+    Input Password    j_password    juniper123
+    Click Button    loginBtn
+    ${title}=    Get Title
+    Sleep    2
+    Should Be Equal    ${title}    Junos Space Network Management Platform
+    Close Browser
+    ${EXECDIR}
+
+TestCase 2
+    [Tags]    TC2
+    #Open main page for login
+    Open Browser    http://d-jss-app.jnpr.net:50080/jss-ciat/app/home    firefox
+    #Maximize Browser Window
+    Input Text    j_username    demo
+    Input Text    j_password    demo
+    Click Button    submit
+    Page Should Contain    Welcome
+    Mouse Over    externalNav
+    Click Element    xpath=//li[@id="smWorkbenchNav"]/a
+    Click Element    id=smWorkbenchPage
+    Select Frame    id=smWorkbenchPage
+    Wait Until Page Contains Element    xpath=//input[starts-with(@id,"fl-input")]
+    Input Text    xpath=//input[@id='fl-input-001']    Juniper-IT
+
+SM Tool
+    [Tags]    SM
+    #Open main page for login
+    Open Browser    http://d-jss-app.jnpr.net:50080/jss-ciat/app/home    chrome
+    #Maximize Browser Window
+    Input Text    j_username    demo
+    Input Text    j_password    demo
+    Click Button    submit
+    Page Should Contain    Welcome
+    Mouse Over    externalNav
+    Click Element    xpath=//li[@id="smWorkbenchNav"]/a
+    Sleep    2
+    Select Frame    id=smWorkbenchPage
+    Wait Until Page Contains Element    xpath=//input[starts-with(@id,"fl-input")]
+    Input Text    xpath=//input[starts-with(@id,"fl-input")]    Juniper-IT
+    #Click Element    xpath=//input[starts-with(@id,"fl-input")]
+    sleep    2
+    Unselect Frame
+    Select Frame    id=smWorkbenchPage
+    Click Element    xpath=//ul/li[starts-with(@id, 'item')]
+    #Click Button    xpath=/html/body/div/div/div/div[2]/div[1]/div/div/div[2]/adf-widget-content/div[3]/button
+    Click Button    xpath=/html/body/div/div/div/div[2]/div/div/div/div[2]/adf-widget-content/div/div[3]/button[1]
+    Click Element    xpath=/html/body/div/div/div/div[2]/div[2]/div/div/div[2]/adf-widget-content/md-tabs/md-tabs-wrapper/md-tabs-canvas/md-pagination-wrapper/md-tab-item[2]
+    sleep    4
+    ${table}=    Get Table Cell    xpath=/html/body/div/div/div/div[2]/div/div/div/div[2]/adf-widget-content/md-tabs/md-tabs-content-wrapper/md-tab-content[2]/div/md-content/div[2]/md-content/div/table    1    1
+    log    ${table}
+    #Number of rows and columns
+    ${rows}=    Get Matching Xpath Count    //md-tab-content[starts-with(@id,"tab-content-003")]/div/md-content/div[2]/form/md-content/div/table/tbody/tr
+    ${cols}=    Get Matching Xpath Count    //md-tab-content[starts-with(@id,"tab-content-003")]/div/md-content/div[2]/form/md-content/div/table/tbody/tr[1]/td
+    #${cols}=    Set Variable    10
+    log    Row Count = ${rows}    WARN
+    log    Col Count = ${cols}    WARN
+    #Extracting values from table and putting into CSV file
+    Create File    example.csv
+    #First page extraction
+    : FOR    ${row}    IN RANGE    2    ${rows}+2
+    \    @{contents}=    getValue    ${row}    ${cols}
+    \    Log List    ${contents}
+    \    #${tmp}=    Replace String    ${contents}[0]    "[u'    '
+    \    #${tmp}=    Replace String    ${tmp}    '][0]"    '
+    \    #${tmp}=    Replace String    ${tmp}    [u'    '
+    \    #${tmp}=    Replace String    ${tmp}    u'    '
+    \    Append To File    example.csv    ${contents}[0]
+    \    Append To File    example.csv    "\n"
+    #Next page extraction
+    Click Element    xpath=/html/body/div/div/div/div[2]/div[2]/div/div/div[2]/adf-widget-content/md-tabs/md-tabs-content-wrapper/md-tab-content[2]/div/md-content/div[2]/form/md-content/div/table/tfoot/tr/td/div/div/div/span[3]/ul/li[6]/a/span
+    Sleep    5
+    : FOR    ${row}    IN RANGE    2    ${rows}+2
+    \    @{contents}=    getValue    ${row}    ${cols}
+    \    Log List    ${contents}
+    \    Append To File    example.csv    ${contents}[0]
+    \    Append To File    example.csv    "\n"
+    Click Element    xpath=/html/body/div/div/div/div[2]/div[2]/div/div/div[2]/adf-widget-content/md-tabs/md-tabs-content-wrapper/md-tab-content[2]/div/md-content/div[2]/form/md-content/div/table/tfoot/tr/td/div/div/div/span[3]/ul/li[6]/a/span
+    #Custom library function call for mapping of extracted values with repo.
+    Prepare File For Inventory Mapping    example.csv
+    Prepare File For Mailing    asifj    c:\tmp
+
+backup
+    [Tags]    bk
+    Open Browser    http://d-jss-app.jnpr.net:50080/jss-ciat/smworkbench/inventory.htm    firefox
+    sleep    4
+    Input Text    xpath=//*[@id="fl-input-005"]    Juniper-IT
+    Input Text    xpath=//*[@id="fl-input-005"]    Juniper-IT
+    Click Element    xpath=//*[@id="fl-input-005"]
+    sleep    2
+    Click Element    xpath=//ul/li[starts-with(@id, 'item')]
+    Click Button    xpath=/html/body/div/div/div/div[2]/div/div/div/div[2]/adf-widget-content/div/div[3]/button[1]
+    Click Element    xpath=/html/body/div[1]/div/div/div[2]/div/div/div/div[2]/adf-widget-content/md-tabs/md-tabs-wrapper/md-tabs-canvas/md-pagination-wrapper/md-tab-item[2]/span
+    sleep    4
+    ${table}=    Get Table Cell    xpath=/html/body/div/div/div/div[2]/div/div/div/div[2]/adf-widget-content/md-tabs/md-tabs-content-wrapper/md-tab-content[2]/div/md-content/div[2]/md-content/div/table    1    1
+    log    ${table}
+    ${rows}=    Get Matching Xpath Count    //md-tab-content[starts-with(@id,"tab-content-003")]/div/md-content/div[2]/form/md-content/div/table/tbody/tr
+    ${cols}=    Get Matching Xpath Count    //md-tab-content[starts-with(@id,"tab-content-003")]/div/md-content/div[2]/form/md-content/div/table/tbody/tr[1]/td
+    ${n}=    Get Matching Xpath Count    //md-tab-content[starts-with(@id,"tab-content-003")]/div/md-content/div[2]/form/md-content/div/table/tbody
+    ${cols}=    Set Variable    10
+    log    Row Count = ${rows}    WARN
+    log    Col Count = ${cols}    WARN
+    #log    ${n}
+    Create File    example.csv
+    : FOR    ${row}    IN RANGE    2    ${rows}+2
+    \    @{contents}=    getValue    ${row}    ${cols}
+    \    Log List    ${contents}
+    \    #${tmp}=    Replace String    ${contents}[0]    "[u'    '
+    \    #${tmp}=    Replace String    ${tmp}    '][0]"    '
+    \    #${tmp}=    Replace String    ${tmp}    [u'    '
+    \    #${tmp}=    Replace String    ${tmp}    u'    '
+    \    Append To File    example.csv    ${contents}[0]
+    \    Append To File    example.csv    "\n"
+    Click Element    xpath=/html/body/div/div/div/div[2]/div[2]/div/div/div[2]/adf-widget-content/md-tabs/md-tabs-content-wrapper/md-tab-content[2]/div/md-content/div[2]/form/md-content/div/table/tfoot/tr/td/div/div/div/span[3]/ul/li[6]/a/span
+    Sleep    5
+    : FOR    ${row}    IN RANGE    2    ${rows}+2
+    \    @{contents}=    getValue    ${row}    ${cols}
+    \    Log List    ${contents}
+    \    Append To File    example.csv    ${contents}[0]
+    \    Append To File    example.csv    "\n"
+    Click Element    xpath=/html/body/div/div/div/div[2]/div[2]/div/div/div[2]/adf-widget-content/md-tabs/md-tabs-content-wrapper/md-tab-content[2]/div/md-content/div[2]/form/md-content/div/table/tfoot/tr/td/div/div/div/span[3]/ul/li[6]/a/span
+    Prepare File For Inventory Mapping    example.csv
+
+compress
+    [Tags]    compress
+    Open Browser    http://d-jss-app.jnpr.net:50080/jss-ciat/smworkbench/inventory.htm    firefox
+    sleep    2
+    Select Frame    id=smWorkbenchPage
+    Input Text    xpath=//input[starts-with(@id, 'fl-')]    Juniper-IT
+    Input Text    xpath=//input[starts-with(@id, 'fl-')]    Juniper-IT
+    Click Element    xpath=//input[starts-with(@id, 'fl-')]
+    sleep    2
+    Click Element    xpath=//ul/li[starts-with(@id, 'item')]
+    Click Button    xpath=/html/body/div/div/div/div[2]/div[1]/div/div/div[2]/adf-widget-content/div[3]/button
+    Click Element    xpath=/html/body/div/div/div/div[2]/div[2]/div/div/div[2]/adf-widget-content/md-tabs/md-tabs-wrapper/md-tabs-canvas/md-pagination-wrapper/md-tab-item[2]
+    sleep    4
+    ${table}=    Get Table Cell    xpath=//table[starts-with(@items,"inventories")]    1    1
+    log    ${table}
+    ${rows}=    Get Matching Xpath Count    //md-tab-content[starts-with(@id,"tab-content-003")]/div/md-content/div[2]/form/md-content/div/table/tbody/tr
+    ${cols}=    Get Matching Xpath Count    //md-tab-content[starts-with(@id,"tab-content-003")]/div/md-content/div[2]/form/md-content/div/table/tbody/tr[1]/td
+    ${n}=    Get Matching Xpath Count    //md-tab-content[starts-with(@id,"tab-content-003")]/div/md-content/div[2]/form/md-content/div/table/tbody
+    ${cols}=    Set Variable    10
+    log    Row Count = ${rows}    WARN
+    log    Col Count = ${cols}    WARN
+    #log    ${n}
+    Create File    example.csv
+    : FOR    ${row}    IN RANGE    2    ${rows}+2
+    \    @{contents}=    getValue    ${row}    ${cols}
+    \    Log List    ${contents}
+    \    #${tmp}=    Replace String    ${contents}[0]    "[u'    '
+    \    #${tmp}=    Replace String    ${tmp}    '][0]"    '
+    \    #${tmp}=    Replace String    ${tmp}    [u'    '
+    \    #${tmp}=    Replace String    ${tmp}    u'    '
+    \    Append To File    example.csv    ${contents}[0]
+    \    Append To File    example.csv    "\n"
+    Click Element    xpath=/html/body/div/div/div/div[2]/div[2]/div/div/div[2]/adf-widget-content/md-tabs/md-tabs-content-wrapper/md-tab-content[2]/div/md-content/div[2]/form/md-content/div/table/tfoot/tr/td/div/div/div/span[3]/ul/li[6]/a/span
+    Sleep    5
+    : FOR    ${row}    IN RANGE    2    ${rows}+2
+    \    @{contents}=    getValue    ${row}    ${cols}
+    \    Log List    ${contents}
+    \    Append To File    example.csv    ${contents}[0]
+    \    Append To File    example.csv    "\n"
+    Click Element    xpath=/html/body/div/div/div/div[2]/div[2]/div/div/div[2]/adf-widget-content/md-tabs/md-tabs-content-wrapper/md-tab-content[2]/div/md-content/div[2]/form/md-content/div/table/tfoot/tr/td/div/div/div/span[3]/ul/li[6]/a/span
+    Prepare File For Inventory Mapping    example.csv
+
+*** Keywords ***
+getValue
+    [Arguments]    ${row}    ${cols}
+    @{rowContent}=    Create List
+    : FOR    ${col}    IN RANGE    1    ${cols}+1
+    \    ${val}=    Get Table Cell    xpath=//table[starts-with(@items,"inventories")]    ${row}    ${col}
+    \    Append To List    ${rowContent}    ${val}
+    Return From Keyword    @{rowContent}
