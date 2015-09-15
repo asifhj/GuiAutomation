@@ -500,8 +500,16 @@ getInventoryDivTableRow
     log    Col Count = ${cols}    WARN
     log    Total = ${total}    WARN
     : FOR    ${row}    IN RANGE    1    ${rows}+1
-    \    Log    ${row}
-    \    ${Device Name}=    Get Text    //md-tab-content[2]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[${row}]/div[1]/span/span/span/span[3]
+    \    Click Element    //md-tab-content[2]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[${row}]/div[1]/span/span/span/span[1]
+    \    Sleep    4
+    \    ${exists}=    Get Matching Xpath Count    //md-tab-content[2]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[${row}]/div[1]/span/span/span/span[1]
+    \    ${exists1}=    Get Matching Xpath Count    //md-tab-content[2]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[${row}]/div[1]/span/span/span/span
+    \    ${element}=    Run Keyword if    ${exists}==${exists}    getChildElement    ELSE    getParentElement
+    \    ${rows}=    Evaluate    int(${rows})+int(${exists})
+    \    Log    Parent= ${exists}
+    \    Log    Child= ${exists1}
+    \    Log    Row No= ${row}
+    \    ${Device Name}=    Get Text    //md-tab-content[2]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[${row}]/div[1]/span/span/span/${element}
     \    ${Module}=    Get Text    //md-tab-content[2]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[${row}]/div[2]/span/span
     \    ${Sub Module}=    Get Text    //md-tab-content[2]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[${row}]/div[3]/span/span
     \    ${Sub Sub Module}=    Get Text    //md-tab-content[2]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[${row}]/div[4]/span/span
@@ -518,6 +526,13 @@ getInventoryDivTableRow
     \    ...    ${Revision}    ${Description}
     \    Append To File    C:\\tmp\\ASWorkbench\\WebTesting\\Inventory.csv    ${record}[0]
     \    Append To File    C:\\tmp\\ASWorkbench\\WebTesting\\Inventory.csv    "\n"
+    \    Sleep    2
+
+getChildElement
+    Return From Keyword    span
+
+getParentElement
+    Return From Keyword    span[3]
 
 getRowCounter
     Return From Keyword    int(int(${counter})-int(${total}))
