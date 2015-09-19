@@ -1,0 +1,3 @@
+var path = '/html/body/div/div/div/div[2]/div/div/div/div[2]/adf-widget-content/md-tabs/md-tabs-content-wrapper/md-tab-content/div/div/md-tabs/md-tabs-content-wrapper/md-tab-content[2]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[1]/div[1]/span/span/span/span[3]'
+var element = document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML;
+return element
