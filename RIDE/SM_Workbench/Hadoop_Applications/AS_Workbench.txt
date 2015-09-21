@@ -18,12 +18,12 @@ ${INVENTORY_TAB}    2
 ${FRU_TAB}         3
 ${SOFTWARE_ANALYSIS_TAB}    4
 ${EOL_TAB}        5
-${CONTRACT_FILTER_COLUMN_TAB}    2
+${CONTRACT_FILTER_COLUMN_TAB}    4
 ${INVENTORY_FILTER_COLUMN_TAB}    2
 ${FRU_FILTER_COLUMN_TAB}    3
 ${SOFTWARE_ANALYSIS_FILTER_COLUMN_TAB}    2
 ${EOL_FILTER_COLUMN_TAB}    2
-${CONTRACT_FILTER_DATA_TAB}    2
+${CONTRACT_FILTER_DATA_TAB}    srx
 ${INVENTORY_FILTER_DATA_TAB}    Chassis
 ${FRU_FILTER_DATA_TAB}    mx480
 ${SOFTWARE_ANALYSIS_FILTER_DATA_TAB}    mx480
@@ -82,9 +82,161 @@ Verify Tabs Loading
     Should Be Equal    ${fourthVal}    SOFTWARE ANALYSIS
     Should Be Equal    ${fifthVal}    EOL
 
+
+Verify CONTRACT Table Header Information
+    [Tags]    ch
+    Click Element    //md-tab-item[${CONTRACT_TAB}][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
+    Sleep    5
+    ${serialId}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[1]/div[2]/span[4]
+    ${contractId}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[2]/div[2]/span[2]
+    ${product}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[3]/div/span[2]
+    ${platform}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[4]/div/span[2]
+    ${sku}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[5]/div/span[2]
+    ${skuClassification}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[6]/div/span[2]
+    ${status}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[7]/div/span[2]
+    ${startDate}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[8]/div/span[2]
+    ${endDate}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[9]/div/span[2]
+    Sleep    2
+    Should Be Equal    ${serialId}    Serial Number
+    Should Be Equal    ${contractId}    Contract Id
+    Should Be Equal    ${product}    Product
+    Should Be Equal    ${platform}    Platform
+    Should Be Equal    ${sku}    SKU
+    Should Be Equal    ${skuClassification}    SKU Classification
+    Should Be Equal    ${status}    Status
+    Should Be Equal    ${startDate}    Start Date
+    Should Be Equal    ${endDate}    End Date
+
+Verify CONTRACT Columns Settings Menu
+    [Tags]    cc
+    Sleep    4
+    Mouse Over    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-trigger/button
+    Sleep    4
+    Click Button    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-actions/div[2]/button
+    Sleep    4
+    ${settings_columns_header}    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[1]/div/div
+    ${serialId}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span/span[2]
+    ${contractId}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[2]/span/span[2]
+    ${product}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[3]/span/span[2]
+    ${platform}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[4]/span/span[2]
+    ${sku}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span/span[2]
+    ${skuClassification}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[6]/span/span[2]
+    ${status}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[7]/span/span[2]
+    ${startDate}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[8]/span/span[2]
+    ${endDate}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[9]/span/span[2]
+    Should Be Equal    ${serialId}    Serial Number
+    Should Be Equal    ${contractId}    Contract Id
+    Should Be Equal    ${product}    Product
+    Should Be Equal    ${platform}    Platform
+    Should Be Equal    ${sku}    SKU
+    Should Be Equal    ${skuClassification}    SKU Classification
+    Should Be Equal    ${status}    Status
+    Should Be Equal    ${startDate}    Start Date
+    Should Be Equal    ${endDate}    End Date
+
+
+Verify CONTRACT Disabling All Columns
+    [Tags]    cc
+    # Disabling all columns
+    Log    Disabling all columns
+    Sleep    4
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span/span[1]
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[2]/span/span[1]
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[3]/span/span[1]
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[4]/span/span[1]
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span/span[1]
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[6]/span/span[1]
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[7]/span/span[1]
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[8]/span/span[1]
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[9]/span/span[1]
+    Sleep    3
+    ${settings_columns_header}    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[1]/div/div
+    ${Serial Number}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span/span[2]
+    ${Contract Id}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[2]/span/span[2]
+    ${Product}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[3]/span/span[2]
+    ${Platform}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[4]/span/span[2]
+    ${SKU}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span/span[2]
+    ${SKU Classification}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[6]/span/span[2]
+    ${Status}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[7]/span/span[2]
+    ${Start Date}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[8]/span/span[2]
+    ${End Date}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[9]/span/span[2]
+    Sleep    2
+    Should Be Equal    ${settings_columns_header}    Columns
+    #Should Not Be Equal    ${Device Name}    Device Name
+    #Should Not Be Equal    ${Module}    Module
+    #Should Not Be Equal    ${Sub Module}    Sub Module
+    #Should Not Be Equal    ${Sub Sub Module}    Sub Sub Module
+    #Should Not Be Equal    ${Sub Sub Sub Module}    Sub Sub Sub Module
+    #Should Not Be Equal    ${Part Number}    Part Number
+    #Should Not Be Equal    ${Model Number}    Model Number
+    #Should Not Be Equal    ${Serial Number}    Serial Number
+    #Should Not Be Equal    ${Product}    Product
+    #Should Not Be Equal    ${Platform}    Platform
+    #Should Not Be Equal    ${Revision}    Revision
+    #Should Not Be Equal    ${Description}    Description
+    Sleep    3
+
+Verify CONTRACT Enabling All Columns
+    [Tags]    cc
+    Log    Enable all columns
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[2]/span
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[3]/span
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[4]/span
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[6]/span
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[7]/span
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[8]/span
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[9]/span
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span/span[1]
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[2]/span/span[1]
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[3]/span/span[1]
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[4]/span/span[1]
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span/span[1]
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[6]/span/span[1]
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[7]/span/span[1]
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[8]/span/span[1]
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[9]/span/span[1]
+    Sleep    3
+
+Verify CONTRACT Filtering based on Platform
+    [Tags]    cf
+    Click Element    //md-tab-item[${CONTRACT_TAB}][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
+    Sleep    5
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[${CONTRACT_FILTER_COLUMN_TAB}]/span
+    Sleep    5
+    Wait Until Element Is Visible    //md-tab-content[@id="tab-content-3"]/div/div/md-content/div/md-content/div/div/div/div[@id="borderLayout_eRootPanel"]/div[3]    timeout=5
+    Input Text    //div[@id="borderLayout_eRootPanel"]/div[3]/div/div[2]/input    ${CONTRACT_FILTER_DATA_TAB}
+    Click Button    //div[@id="borderLayout_eRootPanel"]/div[3]/div/div[3]/button[1]
+    Sleep    5
+    ${settings_columns_header}    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[1]/div/div
+    ${Serial Number}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span/span[2]
+    ${Contract Id}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[2]/span/span[2]
+    ${Product}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[3]/span/span[2]
+    ${Platform}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[4]/span/span[2]
+    ${SKU}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span/span[2]
+    ${SKU Classification}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[6]/span/span[2]
+    ${Status}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[7]/span/span[2]
+    ${Start Date}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[8]/span/span[2]
+    ${End Date}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[9]/span/span[2]
+    ${count}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[1]/span[3]
+    ${pages}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/span[2]
+    log    pages = ${pages}    WARN
+    : FOR    ${page}    IN RANGE    0    ${pages}
+    \    Log    Getting Page Rows Count    WARN
+    \    ${page_rows}    Run Keyword    getPageRows    ${CONTRACT_TAB}
+    \    Log    Page ${page} contains ${page_rows} rows    WARN
+    \    checkFilters    ${FRU_TAB}   ${page_rows}    ${CONTRACT_FILTER_COLUMN_TAB}    ${CONTRACT_FILTER_DATA_TAB}
+    \    ${tmp}    Evaluate    ${page}+1
+    \    Run keyword If    ${tmp}==${pages}    Exit For Loop
+    \    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
+    #\    Run Keyword If    ${page}<=${pages}+1    Exit For Loop
+
+
+
 Verify INVENTORY Table Header Information
-    [Tags]    i
-    Click Element    //md-tab-item[2][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
+    [Tags]    ih
+    Click Element    //md-tab-item[${INVENTORY_TAB}][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
     Sleep    5
     ${Device Name}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[1]/div[2]/span[4]
     ${Module}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[2]/div[2]/span[2]
@@ -111,6 +263,132 @@ Verify INVENTORY Table Header Information
     Should Be Equal    ${Platform}    Platform
     Should Be Equal    ${Revision}    Revision
     Should Be Equal    ${Description}    Description
+
+Verify INVENTORY Columns Settings Menu
+    [Tags]    ic
+    Sleep    4
+    Mouse Over    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-trigger/button
+    #Wait Until Element Is Visible    //md-content[@class="md-default-theme"]/div[4]/div[2]/md-fab-speed-dial/md-fab-actions/div[2]/button
+    Sleep    4
+    Click Button    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-actions/div[2]/button
+    Sleep    4
+    ${settings_columns_header}    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[1]/div/div
+    ${Device Name}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span/span[2]
+    ${Module}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[2]/span/span[2]
+    ${Sub Module}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[3]/span/span[2]
+    ${Sub Sub Module}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[4]/span/span[2]
+    ${Sub Sub Sub Module}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span/span[2]
+    ${Part Number}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[6]/span/span[2]
+    ${Model Number}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[7]/span/span[2]
+    ${Serial Number}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[8]/span/span[2]
+    ${Product}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[9]/span/span[2]
+    ${Platform}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[10]/span/span[2]
+    ${Revision}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[11]/span/span[2]
+    ${Description}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[12]/span/span[2]
+    Should Be Equal    ${settings_columns_header}    Columns
+    Should Be Equal    ${Device Name}    Device Name
+    Should Be Equal    ${Module}    Module
+    Should Be Equal    ${Sub Module}    Sub Module
+    Should Be Equal    ${Sub Sub Module}    Sub Sub Module
+    Should Be Equal    ${Sub Sub Sub Module}    Sub Sub Sub Module
+    Should Be Equal    ${Part Number}    Part Number
+    Should Be Equal    ${Model Number}    Model Number
+    Should Be Equal    ${Serial Number}    Serial Number
+    Should Be Equal    ${Product}    Product
+    Should Be Equal    ${Platform}    Platform
+    Should Be Equal    ${Revision}    Revision
+    Should Be Equal    ${Description}    Description
+
+Verify INVENTORY Disabling All Columns
+    [Tags]    ic
+    # Disabling all columns
+    Log    Disabling all columns
+    Sleep    4
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span/span[1]
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[2]/span/span[1]
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[3]/span/span[1]
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[4]/span/span[1]
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span/span[1]
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[6]/span/span[1]
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[7]/span/span[1]
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[8]/span/span[1]
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[9]/span/span[1]
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[10]/span/span[1]
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[11]/span/span[1]
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[12]/span/span[1]
+    Sleep    3
+    ${settings_columns_header}    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[1]/div/div
+    ${Device Name}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span/span[2]
+    ${Module}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[2]/span/span[2]
+    ${Sub Module}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[3]/span/span[2]
+    ${Sub Sub Module}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[4]/span/span[2]
+    ${Sub Sub Sub Module}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span/span[2]
+    ${Part Number}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[6]/span/span[2]
+    ${Model Number}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[7]/span/span[2]
+    ${Serial Number}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[8]/span/span[2]
+    ${Product}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[9]/span/span[2]
+    ${Platform}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[10]/span/span[2]
+    ${Revision}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[11]/span/span[2]
+    ${Description}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[12]/span/span[2]
+    Sleep    2
+    Should Be Equal    ${settings_columns_header}    Columns
+    #Should Not Be Equal    ${Device Name}    Device Name
+    #Should Not Be Equal    ${Module}    Module
+    #Should Not Be Equal    ${Sub Module}    Sub Module
+    #Should Not Be Equal    ${Sub Sub Module}    Sub Sub Module
+    #Should Not Be Equal    ${Sub Sub Sub Module}    Sub Sub Sub Module
+    #Should Not Be Equal    ${Part Number}    Part Number
+    #Should Not Be Equal    ${Model Number}    Model Number
+    #Should Not Be Equal    ${Serial Number}    Serial Number
+    #Should Not Be Equal    ${Product}    Product
+    #Should Not Be Equal    ${Platform}    Platform
+    #Should Not Be Equal    ${Revision}    Revision
+    #Should Not Be Equal    ${Description}    Description
+    Sleep    3
+
+Verify INVENTORY Enabling All Columns
+    [Tags]    ic
+    Log    Enable all columns
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[2]/span
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[3]/span
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[4]/span
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[6]/span
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[7]/span
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[8]/span
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[9]/span
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[10]/span
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[11]/span
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[12]/span
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span/span[1]
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[2]/span/span[1]
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[3]/span/span[1]
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[4]/span/span[1]
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span/span[1]
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[6]/span/span[1]
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[7]/span/span[1]
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[8]/span/span[1]
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[9]/span/span[1]
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[10]/span/span[1]
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[11]/span/span[1]
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[12]/span/span[1]
+    Sleep    3
+
+Verify INVENTORY Disabling and Enabling Of Single Column "Device Name"
+    # Disable column "Serial Id"
+    [Tags]    icaasa
+    Log    Disabling column "Device Name"
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span/span[1]
+    Sleep    3
+    ${Device Name}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span/span[2]
+    Sleep    2
+    Should Not Be Equal    ${Device Name}    Device Name
+    Sleep    3
+    Log    Enabling column "Serial Id"
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span/span[1]
+    Sleep    3
 
 Verify INVENTORY Filtering based on Module
     [Tags]    if
@@ -194,8 +472,8 @@ Verify INVENTORY Data
     Prepare File For Inventory Mapping    ${REPORTDIR}${CUSTOMERNAME}-WebTestingInventoryTmp.csv
     Compare Inventory    ${REPORTDIR}${CUSTOMERNAME}-WebTestingInventory.csv    ${REPODIR}${CUSTOMERNAME}_inventory.csv
 
-Verify FRU To Chassis Map Table Header Information
-    [Tags]    f
+Verify FRU TO CHASSIS MAP Table Header Information
+    [Tags]    fh
     Click Element    //md-tab-item[3][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
     Sleep    5
     ${Parent Chassis Name}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[1]/div[2]/span[4]
@@ -211,6 +489,64 @@ Verify FRU To Chassis Map Table Header Information
     Should Be Equal    ${Component Serial Number}    Component Serial Number
     Should Be Equal    ${Component Part Number}    Component Part Number
     Should Be Equal    ${Component Model Number}    Component Model Number
+
+
+Verify FRU TO CHASSIS MAP Columns Settings Menu
+    [Tags]    fc
+    Sleep    4
+    Mouse Over    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-trigger/button
+    #Wait Until Element Is Visible    //md-content[@class="md-default-theme"]/div[4]/div[2]/md-fab-speed-dial/md-fab-actions/div[2]/button
+    Sleep    4
+    Click Button    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-actions/div[2]/button
+    Sleep    4
+    ${settings_columns_header}    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[1]/div/div
+    ${Parent Chassis Name}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span/span[2]
+    ${Parent Chassis Serial Number}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[2]/span/span[2]
+    ${Parent Chassis Type}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[3]/span/span[2]
+    ${Component Serial Number}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[4]/span/span[2]
+    ${Component Part Number}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span/span[2]
+    ${Component Model Number}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[6]/span/span[2]
+    Should Be Equal    ${settings_columns_header}    Columns
+    Should Be Equal    ${Parent Chassis Name}    Parent Chassis Name
+    Should Be Equal    ${Parent Chassis Serial Number}    Parent Chassis Serial Number
+    Should Be Equal    ${Parent Chassis Type}    Parent Chassis Type
+    Should Be Equal    ${Component Serial Number}    Component Serial Number
+    Should Be Equal    ${Component Part Number}    Component Part Number
+    Should Be Equal    ${Component Model Number}    Component Model Number
+
+Verify FRU TO CHASSIS MAP Disabling All Columns
+    [Tags]    fc
+    # Disabling all columns
+    Log    Disabling all columns
+    Sleep    4
+    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span/span[1]
+    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[2]/span/span[1]
+    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[3]/span/span[1]
+    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[4]/span/span[1]
+    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span/span[1]
+    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[6]/span/span[1]
+    Sleep    3
+    ${settings_columns_header}    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[1]/div/div
+    Sleep    2
+    Should Be Equal    ${settings_columns_header}    Columns
+    Sleep    3
+
+Verify FRU TO CHASSIS MAP Enabling All Columns
+    [Tags]    fc
+    Log    Enabling all columns
+    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span
+    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[2]/span
+    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[3]/span
+    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[4]/span
+    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span
+    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[6]/span
+    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span/span[1]
+    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[2]/span/span[1]
+    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[3]/span/span[1]
+    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[4]/span/span[1]
+    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span/span[1]
+    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[6]/span/span[1]
+    Sleep    3
 
 Verify FRU TO CHASSIS MAP Filtering based on "Parent Chassis Type"
     [Tags]    ff
@@ -241,7 +577,7 @@ Verify FRU TO CHASSIS MAP Filtering based on "Parent Chassis Type"
     \    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
     #\    Run Keyword If    ${page}<=${pages}+1    Exit For Loop
 
-Verify FRU To Chassis Map Data
+Verify FRU TO CHASSIS MAP Data
     [Tags]    f
     Click Element    //md-tab-item[3][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
     Sleep    5
@@ -282,8 +618,8 @@ Verify FRU To Chassis Map Data
     Prepare File For FRU Mapping    ${REPORTDIR}${CUSTOMERNAME}-WebTestingFRUTmp.csv
     Compare FRU To Chassis    ${REPORTDIR}${CUSTOMERNAME}-WebTestingFRU.csv    ${REPODIR}${CUSTOMERNAME}_FRU-to-Chassis.csv
 
-Verify Software Analysis Table Header Information
-    [Tags]    s
+Verify SOFTWARE ANALYSIS Table Header Information
+    [Tags]    sc
     Click Element    //md-tab-item[${SOFTWARE_ANALYSIS_TAB}][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
     Sleep    5
     ${Device Name}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[1]/div[2]/span[4]
@@ -297,6 +633,59 @@ Verify Software Analysis Table Header Information
     Should Be Equal    ${Platform}    Platform
     Should Be Equal    ${Serial Number}    Serial Number
     Should Be Equal    ${Junos Version}    Junos Version
+
+Verify SOFTWARE ANALYSIS Columns Settings Menu
+    [Tags]    sc
+    Sleep    4
+    Mouse Over    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-trigger/button
+    #Wait Until Element Is Visible    //md-content[@class="md-default-theme"]/div[4]/div[2]/md-fab-speed-dial/md-fab-actions/div[2]/button
+    Sleep    4
+    Click Button    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[2]/md-fab-speed-dial/md-fab-actions/div[2]/button
+    Sleep    4
+    ${settings_columns_header}    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[1]/div/div
+    ${Device Name}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span/span[2]
+    ${Product}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[2]/span/span[2]
+    ${Platform}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[3]/span/span[2]
+    ${Serial Number}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[4]/span/span[2]
+    ${Junos Version}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span/span[2]
+    Should Be Equal    ${settings_columns_header}    Columns
+    Should Be Equal    ${Device Name}    Device Name
+    Should Be Equal    ${Product}    Product
+    Should Be Equal    ${Platform}    Platform
+    Should Be Equal    ${Serial Number}    Serial Number
+    Should Be Equal    ${Junos Version}    Junos Version
+
+Verify SOFTWARE ANALYSIS Disabling All Columns
+    [Tags]    sc
+    # Disabling all columns
+    Log    Disabling all columns
+    Sleep    4
+    Click Element    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span/span[1]
+    Click Element    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[2]/span/span[1]
+    Click Element    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[3]/span/span[1]
+    Click Element    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[4]/span/span[1]
+    Click Element    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span/span[1]
+    Sleep    3
+    ${settings_columns_header}    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[1]/div/div
+    Sleep    2
+    Should Be Equal    ${settings_columns_header}    Columns
+    Sleep    3
+
+Verify SOFTWARE ANALYSIS Enabling All Columns
+    [Tags]    sc
+    Log    Enable all columns
+    Click Element    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span
+    Click Element    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[2]/span
+    Click Element    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[3]/span
+    Click Element    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[4]/span
+    Click Element    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span
+    Click Element    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span/span[1]
+    Click Element    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[2]/span/span[1]
+    Click Element    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[3]/span/span[1]
+    Click Element    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[4]/span/span[1]
+    Click Element    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span/span[1]
+    Sleep    3
+
 
 Verify SOFTWARE ANALYSIS Filtering based on "Product"
     [Tags]    sf
@@ -326,7 +715,7 @@ Verify SOFTWARE ANALYSIS Filtering based on "Product"
     \    Click Element    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
     #\    Run Keyword If    ${page}<=${pages}+1    Exit For Loop
 
-Verify Software Analysis Data
+Verify SOFTWARE ANALYSIS Data
     [Tags]    s
     Click Element    //md-tab-item[4][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
     Sleep    5
@@ -354,249 +743,6 @@ Verify Software Analysis Data
     Prepare File For Software Analysis Mapping    ${REPORTDIR}${CUSTOMERNAME}-WebTestingSoftwareAnalysisTmp.csv
     Compare Software Analysis    ${REPORTDIR}${CUSTOMERNAME}-WebTestingSoftwareAnalysis.csv    ${REPODIR}${CUSTOMERNAME}_software_analysis.csv
 
-Verify INVENTORY Columns Settings
-    [Tags]    ia
-    Sleep    4
-    Mouse Over    //md-content[@class="md-default-theme"]/div[4]/div[2]/md-fab-speed-dial/md-fab-trigger/button
-    #Wait Until Element Is Visible    //md-content[@class="md-default-theme"]/div[4]/div[2]/md-fab-speed-dial/md-fab-actions/div[2]/button
-    Sleep    4
-    Click Button    //div[@layout="column"]/md-content[@class="md-default-theme"]/div[4]/div[2]/md-fab-speed-dial/md-fab-actions/div[2]/button
-    ${settings_columns_header}    Get Text    //div[@id="east"]/div/div/div/div/div
-    ${number_of_columns}    Get Matching Xpath Count    //div[@id="east"]/div/div/div/div/div/div/div/span/span[2]
-    ${serialId}=    Get Text    //div[@id="east"]/div/div/div/div/div/div/div[1]/span/span[2]
-    ${contractId}=    Get Text    //div[@id="east"]/div/div/div/div/div/div/div[2]/span/span[2]
-    ${product}=    Get Text    //div[@id="east"]/div/div/div/div/div/div/div[3]/span/span[2]
-    ${platform}=    Get Text    //div[@id="east"]/div/div/div/div/div/div/div[4]/span/span[2]
-    ${sku}=    Get Text    //div[@id="east"]/div/div/div/div/div/div/div[5]/span/span[2]
-    ${skuClassification}=    Get Text    //div[@id="east"]/div/div/div/div/div/div/div[6]/span/span[2]
-    ${status}=    Get Text    //div[@id="east"]/div/div/div/div/div/div/div[7]/span/span[2]
-    ${startDate}=    Get Text    //div[@id="east"]/div/div/div/div/div/div/div[8]/span/span[2]
-    ${endDate}=    Get Text    //div[@id="east"]/div/div/div/div/div/div/div[9]/span/span[2]
-    Should Be Equal    ${serialId}    Serial Number
-    Should Be Equal    ${contractId}    Contract Id
-    Should Be Equal    ${product}    Product
-    Should Be Equal    ${platform}    Platform
-    Should Be Equal    ${sku}    SKU
-    Should Be Equal    ${skuClassification}    SKU Classification
-    Should Be Equal    ${status}    Status
-    Should Be Equal    ${startDate}    Start Date
-    Should Be Equal    ${endDate}    End Date
-
-Verify INVENTORY Column Selection
-    [Tags]    ia
-    # Disabling all columns
-    Log    Disabling all columns
-    Sleep    4
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[1]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[2]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[3]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[4]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[5]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[6]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[7]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[8]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[9]/span/span[1]
-    Sleep    3
-    ${serialId}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[1]/div/span[4]
-    ${contractId}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[2]/div/span[2]
-    ${product}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[3]/div/span[2]
-    ${platform}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[4]/div/span[2]
-    ${sku}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[5]/div/span[2]
-    ${skuClassification}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[6]/div/span[2]
-    ${status}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[7]/div/span[2]
-    ${startDate}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[8]/div/span[2]
-    ${endDate}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[9]/div/span[2]
-    Sleep    2
-    Should Not Be Equal    ${serialId}    Serial Number
-    Should Not Be Equal    ${contractId}    Contract Id
-    Should Not Be Equal    ${product}    Product
-    Should Not Be Equal    ${platform}    Platform
-    Should Not Be Equal    ${sku}    SKU
-    Should Not Be Equal    ${skuClassification}    SKU Classification
-    Should Not Be Equal    ${status}    Status
-    Should Not Be Equal    ${startDate}    Start Date
-    Should Not Be Equal    ${endDate}    End Date
-    Sleep    3
-    Log    Enable all columns
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[1]/span
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[2]/span
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[3]/span
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[4]/span
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[5]/span
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[6]/span
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[7]/span
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[8]/span
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[9]/span
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[1]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[2]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[3]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[4]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[5]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[6]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[7]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[8]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[9]/span/span[1]
-    Sleep    3
-    # Disable column "Serial Id"
-    Log    Disabling column "Serial Id"
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[1]/span/span[1]
-    Sleep    3
-    ${serialId}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[1]/div/span[4]
-    Sleep    2
-    Should Not Be Equal    ${serialId}    Serial Number
-    Sleep    3
-    Log    Enabling column "Serial Id"
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[1]/span
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[1]/span/span[1]
-    Sleep    3
-
-Verify CONTRACT Table Header Information
-    [Tags]    c
-    Click Element    //md-tab-item[1][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
-    Sleep    5
-    ${serialId}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[1]/div/span[4]
-    ${contractId}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[2]/div/span[2]
-    ${product}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[3]/div/span[2]
-    ${platform}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[4]/div/span[2]
-    ${sku}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[5]/div/span[2]
-    ${skuClassification}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[6]/div/span[2]
-    ${status}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[7]/div/span[2]
-    ${startDate}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[8]/div/span[2]
-    ${endDate}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[9]/div/span[2]
-    ${count}=    Get Text    //div[@id="south"]/div/span/span[3]
-    Sleep    2
-    Should Be Equal    ${serialId}    Serial Number
-    Should Be Equal    ${contractId}    Contract Id
-    Should Be Equal    ${product}    Product
-    Should Be Equal    ${platform}    Platform
-    Should Be Equal    ${sku}    SKU
-    Should Be Equal    ${skuClassification}    SKU Classification
-    Should Be Equal    ${status}    Status
-    Should Be Equal    ${startDate}    Start Date
-    Should Be Equal    ${endDate}    End Date
-    #Should Be Equal    ${count}    Count
-
-Verify CONTRACT Filtering based on Product
-    [Tags]    c
-    Sleep    5
-    Click Element    //div[@id="borderLayout_eGridPanel"]/div/div/div/div/div/div[3]/span[@class="ag-header-cell-menu-button"]
-    Sleep    5
-    Wait Until Element Is Visible    //div[@id="borderLayout_eRootPanel"]/div[3]    timeout=5
-    Input Text    //div[@id="borderLayout_eRootPanel"]/div[3]/div/div[2]/input    srx
-    Click Button    //div[@id="borderLayout_eRootPanel"]/div[3]/div/div[3]/button[1]
-    Sleep    5
-    ${serialId}=    Get Text    //div[@id="center"]/div/div/div/div[2]/div[2]/div/div/div/div[1]/span
-    ${contractId}=    Get Text    //div[@id="center"]/div/div/div/div[2]/div[2]/div/div/div/div[2]/span
-    ${product}=    Get Text    //div[@id="center"]/div/div/div/div[2]/div[2]/div/div/div/div[3]/span
-    ${platform}=    Get Text    //div[@id="center"]/div/div/div/div[2]/div[2]/div/div/div/div[4]/span
-    ${sku}=    Get Text    //div[@id="center"]/div/div/div/div[2]/div[2]/div/div/div/div[5]/span
-    ${skuClassification}=    Get Text    //div[@id="center"]/div/div/div/div[2]/div[2]/div/div/div/div[6]/span
-    ${status}=    Get Text    //div[@id="center"]/div/div/div/div[2]/div[2]/div/div/div/div[7]/span
-    ${startDate}=    Get Text    //div[@id="center"]/div/div/div/div[2]/div[2]/div/div/div/div[8]/span
-    ${endDate}=    Get Text    //div[@id="center"]/div/div/div/div[2]/div[2]/div/div/div/div[9]/span
-    ${count}=    Get Text    //div[@id="south"]/div/span/span[3]
-    ${pages}=    Get Text    //div[@id="south"]/div/span[2]/span[2]
-    : FOR    ${page}    IN RANGE    1    ${pages}\
-    \    getDivTableRow
-    \    Click Element    //div[@id="south"]/div/span[2]/button[@id="btNext"]
-    \    Sleep    5
-    \    Run Keyword If    ${pages}<${pages}    Exit For Loop
-
-Verify CONTRACT Columns Settings
-    [Tags]    c
-    Sleep    4
-    Mouse Over    //md-content[@class="md-default-theme"]/div[4]/div[2]/md-fab-speed-dial/md-fab-trigger/button
-    #Wait Until Element Is Visible    //md-content[@class="md-default-theme"]/div[4]/div[2]/md-fab-speed-dial/md-fab-actions/div[2]/button
-    Sleep    4
-    Click Button    //div[@layout="column"]/md-content[@class="md-default-theme"]/div[4]/div[2]/md-fab-speed-dial/md-fab-actions/div[2]/button
-    ${settings_columns_header}    Get Text    //div[@id="east"]/div/div/div/div/div
-    ${number_of_columns}    Get Matching Xpath Count    //div[@id="east"]/div/div/div/div/div/div/div/span/span[2]
-    ${serialId}=    Get Text    //div[@id="east"]/div/div/div/div/div/div/div[1]/span/span[2]
-    ${contractId}=    Get Text    //div[@id="east"]/div/div/div/div/div/div/div[2]/span/span[2]
-    ${product}=    Get Text    //div[@id="east"]/div/div/div/div/div/div/div[3]/span/span[2]
-    ${platform}=    Get Text    //div[@id="east"]/div/div/div/div/div/div/div[4]/span/span[2]
-    ${sku}=    Get Text    //div[@id="east"]/div/div/div/div/div/div/div[5]/span/span[2]
-    ${skuClassification}=    Get Text    //div[@id="east"]/div/div/div/div/div/div/div[6]/span/span[2]
-    ${status}=    Get Text    //div[@id="east"]/div/div/div/div/div/div/div[7]/span/span[2]
-    ${startDate}=    Get Text    //div[@id="east"]/div/div/div/div/div/div/div[8]/span/span[2]
-    ${endDate}=    Get Text    //div[@id="east"]/div/div/div/div/div/div/div[9]/span/span[2]
-    Should Be Equal    ${serialId}    Serial Number
-    Should Be Equal    ${contractId}    Contract Id
-    Should Be Equal    ${product}    Product
-    Should Be Equal    ${platform}    Platform
-    Should Be Equal    ${sku}    SKU
-    Should Be Equal    ${skuClassification}    SKU Classification
-    Should Be Equal    ${status}    Status
-    Should Be Equal    ${startDate}    Start Date
-    Should Be Equal    ${endDate}    End Date
-
-Verify CONTRACT Column Selection
-    [Tags]    c
-    # Disabling all columns
-    Log    Disabling all columns
-    Sleep    4
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[1]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[2]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[3]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[4]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[5]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[6]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[7]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[8]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[9]/span/span[1]
-    Sleep    3
-    ${serialId}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[1]/div/span[4]
-    ${contractId}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[2]/div/span[2]
-    ${product}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[3]/div/span[2]
-    ${platform}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[4]/div/span[2]
-    ${sku}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[5]/div/span[2]
-    ${skuClassification}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[6]/div/span[2]
-    ${status}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[7]/div/span[2]
-    ${startDate}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[8]/div/span[2]
-    ${endDate}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[9]/div/span[2]
-    Sleep    2
-    Should Not Be Equal    ${serialId}    Serial Number
-    Should Not Be Equal    ${contractId}    Contract Id
-    Should Not Be Equal    ${product}    Product
-    Should Not Be Equal    ${platform}    Platform
-    Should Not Be Equal    ${sku}    SKU
-    Should Not Be Equal    ${skuClassification}    SKU Classification
-    Should Not Be Equal    ${status}    Status
-    Should Not Be Equal    ${startDate}    Start Date
-    Should Not Be Equal    ${endDate}    End Date
-    Sleep    3
-    Log    Enable all columns
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[1]/span
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[2]/span
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[3]/span
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[4]/span
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[5]/span
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[6]/span
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[7]/span
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[8]/span
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[9]/span
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[1]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[2]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[3]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[4]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[5]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[6]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[7]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[8]/span/span[1]
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[9]/span/span[1]
-    Sleep    3
-    # Disable column "Serial Id"
-    Log    Disabling column "Serial Id"
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[1]/span/span[1]
-    Sleep    3
-    ${serialId}=    Get Text    //div[@id="center"]/div/div/div/div/div/div/div[1]/div/span[4]
-    Sleep    2
-    Should Not Be Equal    ${serialId}    Serial Number
-    Sleep    3
-    Log    Enabling column "Serial Id"
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[1]/span
-    Click Element    //div[@id="east"]/div/div/div[2]/div/div/div/div[1]/span/span[1]
-    Sleep    3
 
 Verify Graph
     Comment    Mouse Over    //*/div[@id='pieChart']
