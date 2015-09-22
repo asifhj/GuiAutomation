@@ -7,7 +7,7 @@ Library           String
 Library           EmailLibrary
 
 *** Variables ***
-${CUSTOMERNAME}    DANTE
+${CUSTOMERNAME}    JUNIPER
 ${REPORTDIR}      C:\\tmp\\ASWorkbench\\WebTesting\\
 ${REPODIR}        C:\\tmp\\ASWorkbench\\Repo\\
 ${CUSTOMERNAME}    DANTE
@@ -15,26 +15,28 @@ ${REPORTDIR}      C:\\tmp\\ASWorkbench\\WebTesting\\
 ${REPODIR}        C:\\tmp\\ASWorkbench\\Repo\\
 ${CONTRACT_TAB}    1
 ${INVENTORY_TAB}    2
-${FRU_TAB}         3
+${FRU_TAB}        3
 ${SOFTWARE_ANALYSIS_TAB}    4
 ${EOL_TAB}        5
-${CONTRACT_FILTER_COLUMN_TAB}    4
+${CONTRACT_FILTER_COLUMN_TAB}    2
 ${INVENTORY_FILTER_COLUMN_TAB}    2
 ${FRU_FILTER_COLUMN_TAB}    3
 ${SOFTWARE_ANALYSIS_FILTER_COLUMN_TAB}    2
 ${EOL_FILTER_COLUMN_TAB}    2
-${CONTRACT_FILTER_DATA_TAB}    srx
+${CONTRACT_FILTER_DATA_TAB}    C1-3624326689
 ${INVENTORY_FILTER_DATA_TAB}    Chassis
 ${FRU_FILTER_DATA_TAB}    mx480
 ${SOFTWARE_ANALYSIS_FILTER_DATA_TAB}    mx480
 ${EOL_FILTER_DATA_TAB}    2
+
 *** Test Cases ***
 abc
     [Tags]    abc
     Close All Browsers
     Selenium2Library.Open Browser    http://localhost/a.html
     sleep    2
-    ${a}=    Selenium2Library.Execute Javascript    ${CURDIR}/scroll.js
+    Comment    ${a}=    Selenium2Library.Execute Javascript    ${CURDIR}/scroll.js
+    ${a}=    Selenium2Library.Execute Javascript    ${CURDIR}/click.js
     log    ${a}
 
 def
@@ -82,7 +84,6 @@ Verify Tabs Loading
     Should Be Equal    ${fourthVal}    SOFTWARE ANALYSIS
     Should Be Equal    ${fifthVal}    EOL
 
-
 Verify CONTRACT Table Header Information
     [Tags]    ch
     Click Element    //md-tab-item[${CONTRACT_TAB}][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
@@ -107,33 +108,102 @@ Verify CONTRACT Table Header Information
     Should Be Equal    ${startDate}    Start Date
     Should Be Equal    ${endDate}    End Date
 
+Verify CONTRACT Filtering based on Platform
+    [Tags]    cf
+    Click Element    //md-tab-item[${CONTRACT_TAB}][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
+    Sleep    5
+    Wait Until Page Contains Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[${CONTRACT_FILTER_COLUMN_TAB}]/span    timeout=10
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[${CONTRACT_FILTER_COLUMN_TAB}]/span
+    Sleep    5
+    Input Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[3]/div/div[2]/input    ${CONTRACT_FILTER_DATA_TAB}
+    Click Button    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[3]/div/div[3]/button[1]
+    Sleep    5
+    ${count}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[1]/span[3]
+    ${pages}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/span[2]
+    log    pages = ${pages}    WARN
+    ${next}=    Set Variable    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
+    ${previous}=    Set Variable    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[2]
+
+    : FOR    ${page}    IN RANGE    0    ${pages}
+    \    Log    Getting Page Rows Count    WARN
+    \    ${page_rows}    Run Keyword    getPageRows    ${CONTRACT_TAB}
+    \    Log    Page ${page} contains ${page_rows} rows    WARN
+    \    log    Validating page ${page} data...    WARN
+    \    checkFilters    ${CONTRACT_TAB}    ${page_rows}    ${CONTRACT_FILTER_COLUMN_TAB}    ${CONTRACT_FILTER_DATA_TAB}
+    \    ${tmp}    Evaluate    ${page}+1
+    \    Run keyword If    ${tmp}==${pages}    Exit For Loop
+    \    log    Moving to next page    WARN
+    \    Selenium2Library.Execute Javascript    var result = document.evaluate("${next}",document,null,XPathResult.FIRST_ORDERED_NODE_TYPE,null);var evt = document.createEvent("MouseEvents");evt.initMouseEvent("click", true, true, window,0, 0, 0, 0, 0, false, false, false, false, 0, null);var element = result.singleNodeValue;element.dispatchEvent(evt);
+    Log    Going back to first page....    WARN
+    : FOR    ${page}    IN RANGE    0    ${pages}
+    \    Selenium2Library.Execute Javascript    var result = document.evaluate("${previous}",document,null,XPathResult.FIRST_ORDERED_NODE_TYPE,null);var evt = document.createEvent("MouseEvents");evt.initMouseEvent("click", true, true, window,0, 0, 0, 0, 0, false, false, false, false, 0, null);var element = result.singleNodeValue;element.dispatchEvent(evt);
+    Log    Clearing Filters
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[${CONTRACT_FILTER_COLUMN_TAB}]/span
+    Sleep    5
+    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[3]/div/div[3]/button[2]
+
+
+Verify CONTRACT Data
+    [Tags]    cd
+    Sleep    5
+    Create File    ${REPORTDIR}${CUSTOMERNAME}-WebTestingCONTRACTTmp.csv
+    Append To File    ${REPORTDIR}${CUSTOMERNAME}-WebTestingInventoryTmp.csv    [u'Device Name', u'Module', u'Sub_Module', u'Sub_Sub_Module', u'Sub_Sub_Sub_Module', u'Part Number', u'Revision', u'Model Number', u'Serial Number', u'Description']
+    ${Serial Number}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[1]/div[2]/span[4]
+    ${Contract Id}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[2]/div[2]/span[2]
+    ${Product}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[3]/div[2]/span[2]
+    ${Platform}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[4]/div[2]/span[2]
+    ${SKU}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[5]/div[2]/span[2]
+    ${SKU Classification}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[6]/div[2]/span[2]
+    ${Status}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[7]/div[2]/span[2]
+    ${Start Date}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[8]/div[2]/span[2]
+    ${End Date}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[9]/div[2]/span[2]
+    ${count}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[1]/span[3]
+    ${pages}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/span[2]
+    : FOR    ${page}    IN RANGE    0    ${pages}
+    \    Log    Getting Page Rows Count    WARN
+    \    ${page_rows}    Run Keyword    getPageRows    ${CONTRACT_TAB}
+    \    Log    TotalPageRows = ${page_rows}    WARN
+    \    Log    Getting Page Rows    WARN
+    \    Run Keyword    getContractDivTableRow    ${page_rows}
+    \    Sleep    3
+    \    Log    Loading ${page} Page    WARN
+    \    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
+    \    Sleep    3
+    Prepare File For Inventory Mapping    ${REPORTDIR}${CUSTOMERNAME}-WebTestingCONTRACTTmp.csv
+    #Compare Inventory    ${REPORTDIR}${CUSTOMERNAME}-WebTestingCONTRACT.csv    ${REPODIR}${CUSTOMERNAME}_CONTRACT.csv
+
 Verify CONTRACT Columns Settings Menu
     [Tags]    cc
     Sleep    4
     Mouse Over    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-trigger/button
     Sleep    4
+    Wait Until Page Contains Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-actions/div[2]/button    timeout=10
     Click Button    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-actions/div[2]/button
     Sleep    4
     ${settings_columns_header}    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[1]/div/div
-    ${serialId}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span/span[2]
-    ${contractId}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[2]/span/span[2]
-    ${product}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[3]/span/span[2]
-    ${platform}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[4]/span/span[2]
-    ${sku}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span/span[2]
-    ${skuClassification}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[6]/span/span[2]
-    ${status}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[7]/span/span[2]
-    ${startDate}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[8]/span/span[2]
-    ${endDate}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[9]/span/span[2]
-    Should Be Equal    ${serialId}    Serial Number
-    Should Be Equal    ${contractId}    Contract Id
-    Should Be Equal    ${product}    Product
-    Should Be Equal    ${platform}    Platform
-    Should Be Equal    ${sku}    SKU
-    Should Be Equal    ${skuClassification}    SKU Classification
-    Should Be Equal    ${status}    Status
-    Should Be Equal    ${startDate}    Start Date
-    Should Be Equal    ${endDate}    End Date
-
+    ${Serial Number}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span/span[2]
+    ${Contract Id}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[2]/span/span[2]
+    ${Product}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[3]/span/span[2]
+    ${Platform}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[4]/span/span[2]
+    ${SKU}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span/span[2]
+    ${SKU Classification}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[6]/span/span[2]
+    ${Status}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[7]/span/span[2]
+    ${Start Date}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[8]/span/span[2]
+    ${End Date}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[9]/span/span[2]
+    Sleep    2
+    Should Be Equal    ${settings_columns_header}    Columns
+    #Should Not Be Equal    ${Device Name}    Device Name
+    #Should Not Be Equal    ${Module}    Module
+    #Should Not Be Equal    ${Sub Module}    Sub Module
+    #Should Not Be Equal    ${Sub Sub Module}    Sub Sub Module
+    #Should Not Be Equal    ${Sub Sub Sub Module}    Sub Sub Sub Module
+    #Should Not Be Equal    ${Part Number}    Part Number
+    #Should Not Be Equal    ${Model Number}    Model Number
+    #Should Not Be Equal    ${Serial Number}    Serial Number
+    #Should Not Be Equal    ${Product}    Product
+    #Should Not Be Equal    ${Platform}    Platform
+    #Should Not Be Equal    ${Revision}    Revision
+    #Should Not Be Equal    ${Description}    Description
 
 Verify CONTRACT Disabling All Columns
     [Tags]    cc
@@ -174,7 +244,6 @@ Verify CONTRACT Disabling All Columns
     #Should Not Be Equal    ${Platform}    Platform
     #Should Not Be Equal    ${Revision}    Revision
     #Should Not Be Equal    ${Description}    Description
-    Sleep    3
 
 Verify CONTRACT Enabling All Columns
     [Tags]    cc
@@ -197,42 +266,11 @@ Verify CONTRACT Enabling All Columns
     Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[7]/span/span[1]
     Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[8]/span/span[1]
     Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[9]/span/span[1]
-    Sleep    3
-
-Verify CONTRACT Filtering based on Platform
-    [Tags]    cf
-    Click Element    //md-tab-item[${CONTRACT_TAB}][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
-    Sleep    5
-    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[${CONTRACT_FILTER_COLUMN_TAB}]/span
-    Sleep    5
-    Wait Until Element Is Visible    //md-tab-content[@id="tab-content-3"]/div/div/md-content/div/md-content/div/div/div/div[@id="borderLayout_eRootPanel"]/div[3]    timeout=5
-    Input Text    //div[@id="borderLayout_eRootPanel"]/div[3]/div/div[2]/input    ${CONTRACT_FILTER_DATA_TAB}
-    Click Button    //div[@id="borderLayout_eRootPanel"]/div[3]/div/div[3]/button[1]
-    Sleep    5
-    ${settings_columns_header}    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[1]/div/div
-    ${Serial Number}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span/span[2]
-    ${Contract Id}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[2]/span/span[2]
-    ${Product}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[3]/span/span[2]
-    ${Platform}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[4]/span/span[2]
-    ${SKU}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span/span[2]
-    ${SKU Classification}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[6]/span/span[2]
-    ${Status}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[7]/span/span[2]
-    ${Start Date}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[8]/span/span[2]
-    ${End Date}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[9]/span/span[2]
-    ${count}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[1]/span[3]
-    ${pages}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/span[2]
-    log    pages = ${pages}    WARN
-    : FOR    ${page}    IN RANGE    0    ${pages}
-    \    Log    Getting Page Rows Count    WARN
-    \    ${page_rows}    Run Keyword    getPageRows    ${CONTRACT_TAB}
-    \    Log    Page ${page} contains ${page_rows} rows    WARN
-    \    checkFilters    ${FRU_TAB}   ${page_rows}    ${CONTRACT_FILTER_COLUMN_TAB}    ${CONTRACT_FILTER_DATA_TAB}
-    \    ${tmp}    Evaluate    ${page}+1
-    \    Run keyword If    ${tmp}==${pages}    Exit For Loop
-    \    Click Element    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
-    #\    Run Keyword If    ${page}<=${pages}+1    Exit For Loop
-
-
+    Sleep    4
+    Mouse Over    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-trigger/button
+    Sleep    4
+    Click Button    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-actions/div[2]/button
+    Sleep    4
 
 Verify INVENTORY Table Header Information
     [Tags]    ih
@@ -263,6 +301,106 @@ Verify INVENTORY Table Header Information
     Should Be Equal    ${Platform}    Platform
     Should Be Equal    ${Revision}    Revision
     Should Be Equal    ${Description}    Description
+
+Verify INVENTORY Filtering based on Module
+    [Tags]    if
+    Click Element    //md-tab-item[${INVENTORY_TAB}][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
+    Sleep    5
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[${INVENTORY_FILTER_COLUMN_TAB}]/span
+    Sleep    5
+    Wait Until Element Is Visible    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div[@id="borderLayout_eRootPanel"]/div[3]    timeout=5
+    Input Text    //div[@id="borderLayout_eRootPanel"]/div[3]/div/div[2]/input    ${INVENTORY_FILTER_DATA_TAB}
+    Click Button    //div[@id="borderLayout_eRootPanel"]/div[3]/div/div[3]/button[1]
+    Sleep    5
+    ${Device Name}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[1]/div[2]/span[4]
+    ${Module}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[2]/div[2]/span[2]
+    ${Sub Module}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[3]/div[2]/span[2]
+    ${Sub Sub Module}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[4]/div[2]/span[2]
+    ${Sub Sub Sub Module}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[5]/div[2]/span[2]
+    ${Part Number}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[6]/div[2]/span[2]
+    ${Model Number}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[7]/div[2]/span[2]
+    ${Serial Number}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[8]/div[2]/span[2]
+    ${Product}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[9]/div[2]/span[2]
+    ${Platform}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[10]/div[2]/span[2]
+    ${Revision}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[11]/div[2]/span[2]
+    ${Description}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[12]/div[2]/span[2]
+    ${count}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[1]/span[3]
+    ${pages}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/span[2]
+    Log    pages = ${pages}    WARN
+    ${next}=    Set Variable    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
+    ${previous}=    Set Variable    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[2]
+
+    : FOR    ${page}    IN RANGE    0    ${pages}
+    \    Log    Getting Page Rows Count    WARN
+    \    ${page_rows}    Run Keyword    getPageRows    ${INVENTORY_TAB}
+    \    Log    Page ${page} contains ${page_rows} rows    WARN
+    \    log    Validating page ${page} data...    WARN
+    \    checkFilters    ${INVENTORY_TAB}    ${page_rows}    ${INVENTORY_FILTER_COLUMN_TAB}    ${INVENTORY_FILTER_DATA_TAB}
+    \    ${tmp}    Evaluate    ${page}+1
+    \    Run keyword If    ${tmp}==${pages}    Exit For Loop
+    \    log    Moving to next page    WARN
+    \    Comment    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
+    \    Selenium2Library.Execute Javascript    var result = document.evaluate("${next}",document,null,XPathResult.FIRST_ORDERED_NODE_TYPE,null);var evt = document.createEvent("MouseEvents");evt.initMouseEvent("click", true, true, window,0, 0, 0, 0, 0, false, false, false, false, 0, null);var element = result.singleNodeValue;element.dispatchEvent(evt);
+    Log    Going back to first page....    WARN
+    : FOR    ${page}    IN RANGE    0    ${pages}
+    \    Selenium2Library.Execute Javascript    var result = document.evaluate("${previous}",document,null,XPathResult.FIRST_ORDERED_NODE_TYPE,null);var evt = document.createEvent("MouseEvents");evt.initMouseEvent("click", true, true, window,0, 0, 0, 0, 0, false, false, false, false, 0, null);var element = result.singleNodeValue;element.dispatchEvent(evt);
+    Log    Clearing Filters
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[${INVENTORY_FILTER_COLUMN_TAB}]/span
+    Sleep    5
+    Wait Until Element Is Visible    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div[@id="borderLayout_eRootPanel"]/div[3]    timeout=5
+    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[3]/div/div[3]/button[2]
+
+    #\    Run Keyword If    ${page}<=${pages}+1    Exit For Loop
+
+Verify INVENTORY Data
+    [Tags]    id
+    Click Element    //md-tab-item[${INVENTORY_TAB}][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
+    Sleep    5
+    Create File    ${REPORTDIR}${CUSTOMERNAME}-WebTestingInventoryTmp.csv
+    Append To File    ${REPORTDIR}${CUSTOMERNAME}-WebTestingInventoryTmp.csv    [u'Device Name', u'Module', u'Sub_Module', u'Sub_Sub_Module', u'Sub_Sub_Sub_Module', u'Part Number', u'Revision', u'Model Number', u'Serial Number', u'Description']
+    ${Device Name}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[1]/div[2]/span[4]
+    ${Module}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[2]/div[2]/span[2]
+    ${Sub Module}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[3]/div[2]/span[2]
+    ${Sub Sub Module}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[4]/div[2]/span[2]
+    ${Sub Sub Sub Module}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[5]/div[2]/span[2]
+    ${Part Number}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[6]/div[2]/span[2]
+    ${Model Number}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[7]/div[2]/span[2]
+    ${Serial Number}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[8]/div[2]/span[2]
+    ${Product}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[9]/div[2]/span[2]
+    ${Platform}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[10]/div[2]/span[2]
+    ${Revision}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[11]/div[2]/span[2]
+    ${Description}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[12]/div[2]/span[2]
+    ${count}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[1]/span[3]
+    ${pages}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/span[2]
+    ${next}=    Set Variable    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
+    ${previous}=    Set Variable    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[2]
+
+    : FOR    ${page}    IN RANGE    0    ${pages}
+    \    Log    Clicking Menu For Expanding Rows    WARN
+    \    Mouse Over    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-trigger/button
+    \    Log    Expanding Rows    WARN
+    \    Sleep    4
+    \    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-actions/div[3]/button
+    \    Sleep    5
+    \    Log    Getting Page Rows Count    WARN
+    \    ${page_rows}    Run Keyword    getPageRows    ${INVENTORY_TAB}
+    \    Log    TotalPageRows = ${page_rows}    WARN
+    \    Log    Getting Page Rows    WARN
+    \    Run Keyword    getInventoryDivTableRow    ${page_rows}
+    \    Sleep    3
+    \    Log    Clicking Menu For collapsing Rows    WARN
+    \    Mouse Over    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-trigger/button
+    \    Log    Collapsing Rows    WARN
+    \    Sleep    4
+    \    Wait Until Page Contains Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-actions/div[3]/button    timeout=30
+    \    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-actions/div[3]/button
+    \    Log    Loading ${page} Page    WARN
+    \    Sleep    5
+    \    Selenium2Library.Execute Javascript    var result = document.evaluate("${next}",document,null,XPathResult.FIRST_ORDERED_NODE_TYPE,null);var evt = document.createEvent("MouseEvents");evt.initMouseEvent("click", true, true, window,0, 0, 0, 0, 0, false, false, false, false, 0, null);var element = result.singleNodeValue;element.dispatchEvent(evt);
+    Sleep    3
+    \    #Run Keyword If    ${page}>=1    Exit For Loop
+    Prepare File For Inventory Mapping    ${REPORTDIR}${CUSTOMERNAME}-WebTestingInventoryTmp.csv
+    Compare Inventory    ${REPORTDIR}${CUSTOMERNAME}-WebTestingInventory.csv    ${REPODIR}${CUSTOMERNAME}_inventory.csv
 
 Verify INVENTORY Columns Settings Menu
     [Tags]    ic
@@ -376,8 +514,8 @@ Verify INVENTORY Enabling All Columns
     Sleep    3
 
 Verify INVENTORY Disabling and Enabling Of Single Column "Device Name"
-    # Disable column "Serial Id"
     [Tags]    icaasa
+    # Disable column "Serial Id"
     Log    Disabling column "Device Name"
     Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span/span[1]
     Sleep    3
@@ -389,88 +527,6 @@ Verify INVENTORY Disabling and Enabling Of Single Column "Device Name"
     Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span
     Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span/span[1]
     Sleep    3
-
-Verify INVENTORY Filtering based on Module
-    [Tags]    if
-    Click Element    //md-tab-item[2][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
-    Sleep    5
-    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[${INVENTORY_FILTER_COLUMN_TAB}]/span
-    Sleep    5
-    Wait Until Element Is Visible    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div[@id="borderLayout_eRootPanel"]/div[3]    timeout=5
-    Input Text    //div[@id="borderLayout_eRootPanel"]/div[3]/div/div[2]/input    ${INVENTORY_FILTER_DATA_TAB}
-    Click Button    //div[@id="borderLayout_eRootPanel"]/div[3]/div/div[3]/button[1]
-    Sleep    5
-    ${Device Name}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[1]/div[2]/span[4]
-    ${Module}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[2]/div[2]/span[2]
-    ${Sub Module}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[3]/div[2]/span[2]
-    ${Sub Sub Module}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[4]/div[2]/span[2]
-    ${Sub Sub Sub Module}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[5]/div[2]/span[2]
-    ${Part Number}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[6]/div[2]/span[2]
-    ${Model Number}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[7]/div[2]/span[2]
-    ${Serial Number}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[8]/div[2]/span[2]
-    ${Product}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[9]/div[2]/span[2]
-    ${Platform}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[10]/div[2]/span[2]
-    ${Revision}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[11]/div[2]/span[2]
-    ${Description}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[12]/div[2]/span[2]
-    ${count}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[1]/span[3]
-    ${pages}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/span[2]
-    log    pages = ${pages}    WARN
-    : FOR    ${page}    IN RANGE    0    ${pages}
-    \    Log    Getting Page Rows Count    WARN
-    \    ${page_rows}    Run Keyword    getPageRows    ${INVENTORY_TAB}
-    \    Log    Page ${page} contains ${page_rows} rows    WARN
-    \    checkFilters    ${INVENTORY_TAB}   ${page_rows}    ${INVENTORY_FILTER_COLUMN_TAB}    ${INVENTORY_FILTER_DATA_TAB}
-    \    ${tmp}    Evaluate    ${page}+1
-    \    Run keyword If    ${tmp}==${pages}    Exit For Loop
-    \    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
-    #\    Run Keyword If    ${page}<=${pages}+1    Exit For Loop
-
-Verify INVENTORY Data
-    [Tags]    i
-    Click Element    //md-tab-item[2][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
-    Sleep    5
-    Create File    ${REPORTDIR}${CUSTOMERNAME}-WebTestingInventoryTmp.csv
-    Append To File    ${REPORTDIR}${CUSTOMERNAME}-WebTestingInventoryTmp.csv    [u'Device Name', u'Module', u'Sub_Module', u'Sub_Sub_Module', u'Sub_Sub_Sub_Module', u'Part Number', u'Revision', u'Model Number', u'Serial Number', u'Description']
-    ${Device Name}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[1]/div[2]/span[4]
-    ${Module}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[2]/div[2]/span[2]
-    ${Sub Module}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[3]/div[2]/span[2]
-    ${Sub Sub Module}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[4]/div[2]/span[2]
-    ${Sub Sub Sub Module}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[5]/div[2]/span[2]
-    ${Part Number}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[6]/div[2]/span[2]
-    ${Model Number}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[7]/div[2]/span[2]
-    ${Serial Number}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[8]/div[2]/span[2]
-    ${Product}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[9]/div[2]/span[2]
-    ${Platform}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[10]/div[2]/span[2]
-    ${Revision}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[11]/div[2]/span[2]
-    ${Description}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[12]/div[2]/span[2]
-    ${count}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[1]/span[3]
-    ${pages}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/span[2]
-    : FOR    ${page}    IN RANGE    0    ${pages}
-    \    Log    Clicking Menu For Expanding Rows    WARN
-    \    Mouse Over    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-trigger/button
-    \    Log    Expanding Rows    WARN
-    \    Sleep    4
-    \    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-actions/div[3]/button
-    \    Sleep    5
-    \    Log    Getting Page Rows Count    WARN
-    \    ${page_rows}    Run Keyword    getPageRows    ${INVENTORY_TAB}
-    \    Log    TotalPageRows = ${page_rows}    WARN
-    \    Log    Getting Page Rows    WARN
-    \    Run Keyword    getInventoryDivTableRow    ${page_rows}
-    \    Sleep    3
-    \    Log    Clicking Menu For collapsing Rows    WARN
-    \    Mouse Over    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-trigger/button
-    \    Log    Collapsing Rows    WARN
-    \    Sleep    4
-    \    Wait Until Page Contains Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-actions/div[3]/button    timeout=30
-    \    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-actions/div[3]/button
-    \    Log    Loading ${page} Page    WARN
-    \    Sleep    5
-    \    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
-    \    Sleep    3
-    \    #Run Keyword If    ${page}>=1    Exit For Loop
-    Prepare File For Inventory Mapping    ${REPORTDIR}${CUSTOMERNAME}-WebTestingInventoryTmp.csv
-    Compare Inventory    ${REPORTDIR}${CUSTOMERNAME}-WebTestingInventory.csv    ${REPODIR}${CUSTOMERNAME}_inventory.csv
 
 Verify FRU TO CHASSIS MAP Table Header Information
     [Tags]    fh
@@ -490,6 +546,75 @@ Verify FRU TO CHASSIS MAP Table Header Information
     Should Be Equal    ${Component Part Number}    Component Part Number
     Should Be Equal    ${Component Model Number}    Component Model Number
 
+Verify FRU TO CHASSIS MAP Filtering based on "Parent Chassis Type"
+    [Tags]    ff
+    Click Element    //md-tab-item[${FRU_TAB}][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
+    Sleep    5
+    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[${FRU_FILTER_COLUMN_TAB}]/span
+    Sleep    5
+    Wait Until Element Is Visible    //md-tab-content[@id="tab-content-3"]/div/div/md-content/div/md-content/div/div/div/div[@id="borderLayout_eRootPanel"]/div[3]    timeout=5
+    Input Text    //div[@id="borderLayout_eRootPanel"]/div[3]/div/div[2]/input    ${FRU_FILTER_DATA_TAB}
+    Click Button    //div[@id="borderLayout_eRootPanel"]/div[3]/div/div[3]/button[1]
+    Sleep    5
+    ${Parent Chassis Name}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[1]/div[2]/span[4]
+    ${Parent Chassis Serial Number}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[2]/div[2]/span[2]
+    ${Parent Chassis Type}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[3]/div[2]/span[2]
+    ${Component Serial Number}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[4]/div[2]/span[2]
+    ${Component Part Number}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[5]/div[2]/span[2]
+    ${Component Model Number}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[6]/div[2]/span[2]
+    ${count}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[1]/span[3]
+    ${pages}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/span[2]
+    log    pages = ${pages}    WARN
+    : FOR    ${page}    IN RANGE    0    ${pages}
+    \    Log    Getting Page Rows Count    WARN
+    \    ${page_rows}    Run Keyword    getPageRows    ${FRU_TAB}
+    \    Log    Page ${page} contains ${page_rows} rows    WARN
+    \    checkFilters    ${FRU_TAB}    ${page_rows}    ${FRU_FILTER_COLUMN_TAB}    ${FRU_FILTER_DATA_TAB}
+    \    ${tmp}    Evaluate    ${page}+1
+    \    Run keyword If    ${tmp}==${pages}    Exit For Loop
+    \    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
+    #\    Run Keyword If    ${page}<=${pages}+1    Exit For Loop
+
+Verify FRU TO CHASSIS MAP Data
+    [Tags]    fd
+    Click Element    //md-tab-item[3][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
+    Sleep    5
+    Create File    ${REPORTDIR}${CUSTOMERNAME}-WebTestingFRUTmp.csv
+    #Append To File    ${REPORTDIR}${CUSTOMERNAME}-WebTestingFRUTmp.csv    [u'Parent Chassis Name', u'Parent Chassis Serial Number', u'Parent Chassis Type', u'Component Serial Number', u'Component Part Number', u'Component Model Number']
+    ${Parent Chassis Name}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[1]/div[2]/span[4]
+    ${Parent Chassis Serial Number}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[2]/div[2]/span[2]
+    ${Parent Chassis Type}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[3]/div[2]/span[2]
+    ${Component Serial Number}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[4]/div[2]/span[2]
+    ${Component Part Number}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[5]/div[2]/span[2]
+    ${Component Model Number}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[6]/div[2]/span[2]
+    ${count}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[1]/span[3]
+    ${pages}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/span[2]
+    : FOR    ${page}    IN RANGE    0    ${pages}
+    \    Log    Clicking Menu For Expanding Rows    WARN
+    \    Mouse Over    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-trigger/button
+    \    Log    Expanding Rows    WARN
+    \    Sleep    4
+    \    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-actions/div[3]/button
+    \    Sleep    5
+    \    Log    Getting Page Rows Count    WARN
+    \    ${page_rows}    Run Keyword    getPageRows    ${FRU_TAB}
+    \    Log    TotalPageRows = ${page_rows}    WARN
+    \    Log    Getting Page Rows    WARN
+    \    Run Keyword    getFRUDivTableRow    ${page_rows}
+    \    Sleep    3
+    \    Log    Clicking Menu For collapsing Rows    WARN
+    \    Mouse Over    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-trigger/button
+    \    Log    Collapsing Rows    WARN
+    \    Sleep    4
+    \    Wait Until Page Contains Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-actions/div[3]/button    timeout=30
+    \    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-actions/div[3]/button
+    \    Log    Loading ${page} Page    WARN
+    \    Sleep    5
+    \    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
+    \    Sleep    3
+    \    #Run Keyword If    ${page}>=1    Exit For Loop
+    Prepare File For FRU Mapping    ${REPORTDIR}${CUSTOMERNAME}-WebTestingFRUTmp.csv
+    Compare FRU To Chassis    ${REPORTDIR}${CUSTOMERNAME}-WebTestingFRU.csv    ${REPODIR}${CUSTOMERNAME}_FRU-to-Chassis.csv
 
 Verify FRU TO CHASSIS MAP Columns Settings Menu
     [Tags]    fc
@@ -548,76 +673,6 @@ Verify FRU TO CHASSIS MAP Enabling All Columns
     Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[6]/span/span[1]
     Sleep    3
 
-Verify FRU TO CHASSIS MAP Filtering based on "Parent Chassis Type"
-    [Tags]    ff
-    Click Element    //md-tab-item[${FRU_TAB}][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
-    Sleep    5
-    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[${FRU_FILTER_COLUMN_TAB}]/span
-    Sleep    5
-    Wait Until Element Is Visible    //md-tab-content[@id="tab-content-3"]/div/div/md-content/div/md-content/div/div/div/div[@id="borderLayout_eRootPanel"]/div[3]    timeout=5
-    Input Text    //div[@id="borderLayout_eRootPanel"]/div[3]/div/div[2]/input    ${FRU_FILTER_DATA_TAB}
-    Click Button    //div[@id="borderLayout_eRootPanel"]/div[3]/div/div[3]/button[1]
-    Sleep    5
-    ${Parent Chassis Name}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[1]/div[2]/span[4]
-    ${Parent Chassis Serial Number}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[2]/div[2]/span[2]
-    ${Parent Chassis Type}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[3]/div[2]/span[2]
-    ${Component Serial Number}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[4]/div[2]/span[2]
-    ${Component Part Number}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[5]/div[2]/span[2]
-    ${Component Model Number}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[6]/div[2]/span[2]
-    ${count}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[1]/span[3]
-    ${pages}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/span[2]
-    log    pages = ${pages}    WARN
-    : FOR    ${page}    IN RANGE    0    ${pages}
-    \    Log    Getting Page Rows Count    WARN
-    \    ${page_rows}    Run Keyword    getPageRows    ${FRU_TAB}
-    \    Log    Page ${page} contains ${page_rows} rows    WARN
-    \    checkFilters    ${FRU_TAB}   ${page_rows}    ${FRU_FILTER_COLUMN_TAB}    ${FRU_FILTER_DATA_TAB}
-    \    ${tmp}    Evaluate    ${page}+1
-    \    Run keyword If    ${tmp}==${pages}    Exit For Loop
-    \    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
-    #\    Run Keyword If    ${page}<=${pages}+1    Exit For Loop
-
-Verify FRU TO CHASSIS MAP Data
-    [Tags]    f
-    Click Element    //md-tab-item[3][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
-    Sleep    5
-    Create File    ${REPORTDIR}${CUSTOMERNAME}-WebTestingFRUTmp.csv
-    #Append To File    ${REPORTDIR}${CUSTOMERNAME}-WebTestingFRUTmp.csv    [u'Parent Chassis Name', u'Parent Chassis Serial Number', u'Parent Chassis Type', u'Component Serial Number', u'Component Part Number', u'Component Model Number']
-    ${Parent Chassis Name}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[1]/div[2]/span[4]
-    ${Parent Chassis Serial Number}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[2]/div[2]/span[2]
-    ${Parent Chassis Type}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[3]/div[2]/span[2]
-    ${Component Serial Number}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[4]/div[2]/span[2]
-    ${Component Part Number}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[5]/div[2]/span[2]
-    ${Component Model Number}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[6]/div[2]/span[2]
-    ${count}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[1]/span[3]
-    ${pages}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/span[2]
-    : FOR    ${page}    IN RANGE    0    ${pages}
-    \    Log    Clicking Menu For Expanding Rows    WARN
-    \    Mouse Over    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-trigger/button
-    \    Log    Expanding Rows    WARN
-    \    Sleep    4
-    \    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-actions/div[3]/button
-    \    Sleep    5
-    \    Log    Getting Page Rows Count    WARN
-    \    ${page_rows}    Run Keyword    getPageRows    ${FRU_TAB}
-    \    Log    TotalPageRows = ${page_rows}    WARN
-    \    Log    Getting Page Rows    WARN
-    \    Run Keyword    getFRUDivTableRow    ${page_rows}
-    \    Sleep    3
-    \    Log    Clicking Menu For collapsing Rows    WARN
-    \    Mouse Over    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-trigger/button
-    \    Log    Collapsing Rows    WARN
-    \    Sleep    4
-    \    Wait Until Page Contains Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-actions/div[3]/button    timeout=30
-    \    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-actions/div[3]/button
-    \    Log    Loading ${page} Page    WARN
-    \    Sleep    5
-    \    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
-    \    Sleep    3
-    \    #Run Keyword If    ${page}>=1    Exit For Loop
-    Prepare File For FRU Mapping    ${REPORTDIR}${CUSTOMERNAME}-WebTestingFRUTmp.csv
-    Compare FRU To Chassis    ${REPORTDIR}${CUSTOMERNAME}-WebTestingFRU.csv    ${REPODIR}${CUSTOMERNAME}_FRU-to-Chassis.csv
-
 Verify SOFTWARE ANALYSIS Table Header Information
     [Tags]    sc
     Click Element    //md-tab-item[${SOFTWARE_ANALYSIS_TAB}][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
@@ -633,6 +688,62 @@ Verify SOFTWARE ANALYSIS Table Header Information
     Should Be Equal    ${Platform}    Platform
     Should Be Equal    ${Serial Number}    Serial Number
     Should Be Equal    ${Junos Version}    Junos Version
+
+Verify SOFTWARE ANALYSIS Filtering based on "Product"
+    [Tags]    sf
+    Click Element    //md-tab-item[${SOFTWARE_ANALYSIS_TAB}][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
+    Sleep    5
+    Click Element    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[${SOFTWARE_ANALYSIS_FILTER_COLUMN_TAB}]/span
+    Sleep    5
+    Wait Until Element Is Visible    //md-tab-content[@id="tab-content-4"]/div/div/md-content/div/md-content/div/div/div/div[@id="borderLayout_eRootPanel"]/div[3]    timeout=5
+    Input Text    //div[@id="borderLayout_eRootPanel"]/div[3]/div/div[2]/input    ${SOFTWARE_ANALYSIS_FILTER_DATA_TAB}
+    Click Button    //div[@id="borderLayout_eRootPanel"]/div[3]/div/div[3]/button[1]
+    Sleep    5
+    ${Device Name}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[1]/div[2]/span[4]
+    ${Product}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[2]/div[2]/span[2]
+    ${Platform}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[3]/div[2]/span[2]
+    ${Serial Number}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[4]/div[2]/span[2]
+    ${Junos Version}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[5]/div[2]/span[2]
+    ${count}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[1]/span[3]
+    ${pages}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/span[2]
+    log    pages = ${pages}    WARN
+    : FOR    ${page}    IN RANGE    0    ${pages}
+    \    Log    Getting Page Rows Count    WARN
+    \    ${page_rows}    Run Keyword    getPageRows    ${SOFTWARE_ANALYSIS_TAB}
+    \    Log    Page ${page} contains ${page_rows} rows    WARN
+    \    checkFilters    ${SOFTWARE_ANALYSIS_TAB}    ${page_rows}    ${SOFTWARE_ANALYSIS_FILTER_COLUMN_TAB}    ${SOFTWARE_ANALYSIS_FILTER_DATA_TAB}
+    \    ${tmp}    Evaluate    ${page}+1
+    \    Run keyword If    ${tmp}==${pages}    Exit For Loop
+    \    Click Element    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
+    #\    Run Keyword If    ${page}<=${pages}+1    Exit For Loop
+
+Verify SOFTWARE ANALYSIS Data
+    [Tags]    s
+    Click Element    //md-tab-item[4][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
+    Sleep    5
+    Create File    ${REPORTDIR}${CUSTOMERNAME}-WebTestingSoftwareAnalysisTmp.csv
+    #Append To File    ${REPORTDIR}${CUSTOMERNAME}-WebTestingFRUTmp.csv    [u'Parent Chassis Name', u'Parent Chassis Serial Number', u'Parent Chassis Type', u'Component Serial Number', u'Component Part Number', u'Component Model Number']
+    ${Device Name}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[1]/div[2]/span[4]
+    ${Product}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[2]/div[2]/span[2]
+    ${Platform}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[3]/div[2]/span[2]
+    ${Serial Number}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[4]/div[2]/span[2]
+    ${Junos Version}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[5]/div[2]/span[2]
+    ${count}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[1]/span[3]
+    ${pages}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/span[2]
+    : FOR    ${page}    IN RANGE    0    ${pages}
+    \    Log    Getting Page Rows Count    WARN
+    \    ${page_rows}    Run Keyword    getPageRows    4
+    \    Log    TotalPageRows = ${page_rows}    WARN
+    \    Log    Getting Page Rows    WARN
+    \    Run Keyword    getSoftwareAnalysisDivTableRow    ${page_rows}
+    \    Sleep    3
+    \    Log    Loading ${page} Page    WARN
+    \    Sleep    5
+    \    Click Element    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
+    \    Sleep    3
+    \    #Run Keyword If    ${page}>=1    Exit For Loop
+    Prepare File For Software Analysis Mapping    ${REPORTDIR}${CUSTOMERNAME}-WebTestingSoftwareAnalysisTmp.csv
+    Compare Software Analysis    ${REPORTDIR}${CUSTOMERNAME}-WebTestingSoftwareAnalysis.csv    ${REPODIR}${CUSTOMERNAME}_software_analysis.csv
 
 Verify SOFTWARE ANALYSIS Columns Settings Menu
     [Tags]    sc
@@ -686,64 +797,6 @@ Verify SOFTWARE ANALYSIS Enabling All Columns
     Click Element    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span/span[1]
     Sleep    3
 
-
-Verify SOFTWARE ANALYSIS Filtering based on "Product"
-    [Tags]    sf
-    Click Element    //md-tab-item[${SOFTWARE_ANALYSIS_TAB}][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
-    Sleep    5
-    Click Element    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[${SOFTWARE_ANALYSIS_FILTER_COLUMN_TAB}]/span
-    Sleep    5
-    Wait Until Element Is Visible    //md-tab-content[@id="tab-content-4"]/div/div/md-content/div/md-content/div/div/div/div[@id="borderLayout_eRootPanel"]/div[3]    timeout=5
-    Input Text    //div[@id="borderLayout_eRootPanel"]/div[3]/div/div[2]/input    ${SOFTWARE_ANALYSIS_FILTER_DATA_TAB}
-    Click Button    //div[@id="borderLayout_eRootPanel"]/div[3]/div/div[3]/button[1]
-    Sleep    5
-    ${Device Name}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[1]/div[2]/span[4]
-    ${Product}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[2]/div[2]/span[2]
-    ${Platform}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[3]/div[2]/span[2]
-    ${Serial Number}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[4]/div[2]/span[2]
-    ${Junos Version}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[5]/div[2]/span[2]
-    ${count}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[1]/span[3]
-    ${pages}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/span[2]
-    log    pages = ${pages}    WARN
-    : FOR    ${page}    IN RANGE    0    ${pages}
-    \    Log    Getting Page Rows Count    WARN
-    \    ${page_rows}    Run Keyword    getPageRows    ${SOFTWARE_ANALYSIS_TAB}
-    \    Log    Page ${page} contains ${page_rows} rows    WARN
-    \    checkFilters    ${SOFTWARE_ANALYSIS_TAB}   ${page_rows}    ${SOFTWARE_ANALYSIS_FILTER_COLUMN_TAB}    ${SOFTWARE_ANALYSIS_FILTER_DATA_TAB}
-    \    ${tmp}    Evaluate    ${page}+1
-    \    Run keyword If    ${tmp}==${pages}    Exit For Loop
-    \    Click Element    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
-    #\    Run Keyword If    ${page}<=${pages}+1    Exit For Loop
-
-Verify SOFTWARE ANALYSIS Data
-    [Tags]    s
-    Click Element    //md-tab-item[4][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
-    Sleep    5
-    Create File    ${REPORTDIR}${CUSTOMERNAME}-WebTestingSoftwareAnalysisTmp.csv
-    #Append To File    ${REPORTDIR}${CUSTOMERNAME}-WebTestingFRUTmp.csv    [u'Parent Chassis Name', u'Parent Chassis Serial Number', u'Parent Chassis Type', u'Component Serial Number', u'Component Part Number', u'Component Model Number']
-    ${Device Name}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[1]/div[2]/span[4]
-    ${Product}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[2]/div[2]/span[2]
-    ${Platform}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[3]/div[2]/span[2]
-    ${Serial Number}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[4]/div[2]/span[2]
-    ${Junos Version}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[5]/div[2]/span[2]
-    ${count}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[1]/span[3]
-    ${pages}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/span[2]
-    : FOR    ${page}    IN RANGE    0    ${pages}
-    \    Log    Getting Page Rows Count    WARN
-    \    ${page_rows}    Run Keyword    getPageRows    4
-    \    Log    TotalPageRows = ${page_rows}    WARN
-    \    Log    Getting Page Rows    WARN
-    \    Run Keyword    getSoftwareAnalysisDivTableRow    ${page_rows}
-    \    Sleep    3
-    \    Log    Loading ${page} Page    WARN
-    \    Sleep    5
-    \    Click Element    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
-    \    Sleep    3
-    \    #Run Keyword If    ${page}>=1    Exit For Loop
-    Prepare File For Software Analysis Mapping    ${REPORTDIR}${CUSTOMERNAME}-WebTestingSoftwareAnalysisTmp.csv
-    Compare Software Analysis    ${REPORTDIR}${CUSTOMERNAME}-WebTestingSoftwareAnalysis.csv    ${REPODIR}${CUSTOMERNAME}_software_analysis.csv
-
-
 Verify Graph
     Comment    Mouse Over    //*/div[@id='pieChart']
     Sleep    3
@@ -774,18 +827,16 @@ getPageRows
     [Arguments]    ${tab}
     Sleep    2
     ${rows}=    Set Variable    1000
-    log    Row Count = ${rows}    WARN
+    #log    Row Count = ${rows}    WARN
     Set Global Variable    ${page_rows}    0
     : FOR    ${row}    IN RANGE    0    ${rows}
     \    ${exists}=    Get Matching Xpath Count    //md-tab-content[${tab}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[@row="${row}"]/div[1]/span    #Arrow
-    \    Log    Exists= ${exists}    WARN
-    \    Log    PageRowNo= ${page_rows}    WARN
-    \    ${scroll_count}=    Run Keyword if    int(${row})>=30    getScrollCount    ${row}
-    \    Run Keyword if    int(${row})>29    refreshTable    ${scroll_count}    ${tab}
+    \    ${scroll_count}=    Run Keyword if    int(${row})>=30 and int(${tab})>=2 and int(${tab})<=3    getScrollCount    ${row}
+    \    Run Keyword If    int(${row})>=30 and int(${tab})>=2 and int(${tab})<=3    refreshTable    ${scroll_count}    ${tab}
     \    Run Keyword If    ${exists}==0    Exit For Loop
     \    ${page_rows}=    Evaluate    ${page_rows}+1
     Log    Resetting Table Scroll
-    Run Keyword    resetTable    ${tab}
+    Run Keyword If    int(${tab})>=2 and int(${tab})<=3    resetTable    ${tab}
     Sleep    2
     Return From Keyword    ${page_rows}
 
@@ -803,6 +854,28 @@ getScrollCount
     ${row}    Evaluate    int(${row})-29
     ${tmp}    Evaluate    30*int(${row})
     Return From Keyword    ${tmp}
+
+getContractDivTableRow
+    [Arguments]    ${page_rows}
+    Sleep    4
+    ${rows}=    Set Variable    ${page_rows}
+    log    Row Count = ${rows}    WARN
+    : FOR    ${row}    IN RANGE    0    ${rows}
+    \    Log    Rows= ${rows}
+    \    Log    RowNo= ${row}    WARN
+    \    ${Serial Number}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[@row="${row}"]/div[1]/span/span
+    \    ${Contract Id}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[@row="${row}"]/div[2]/span/span
+    \    ${Product}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[@row="${row}"]/div[3]/span/span
+    \    ${Platform}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[@row="${row}"]/div[4]/span/span
+    \    ${SKU}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[@row="${row}"]/div[5]/span/span
+    \    ${SKU Classification}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[@row="${row}"]/div[5]/span/span
+    \    ${Status}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[@row="${row}"]/div[6]/span/span
+    \    ${Start Date}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[@row="${row}"]/div[7]/span/span
+    \    ${End Date}=    Get Text    //md-tab-content[${CONTRACT_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[@row="${row}"]/div[8]/span/span
+    \    ${record}=    Create List    ${Serial Number}    ${Contract Id}    ${Product}    ${Platform}
+    \    ...    ${SKU}    ${SKU Classification}    ${Status}    ${Start Date}    ${End Date}
+    \    Append To File    ${REPORTDIR}${CUSTOMERNAME}-WebTestingContractTmp.csv    ${record}[0]
+    \    Append To File    ${REPORTDIR}${CUSTOMERNAME}-WebTestingContractTmp.csv    "\n"
 
 getInventoryDivTableRow
     [Arguments]    ${page_rows}
@@ -886,20 +959,20 @@ getSoftwareAnalysisDivTableRow
     \    ...    ${Platform}
     \    Append To File    ${REPORTDIR}${CUSTOMERNAME}-WebTestingSoftwareAnalysisTmp.csv    ${record}[0]
     \    Append To File    ${REPORTDIR}${CUSTOMERNAME}-WebTestingSoftwareAnalysisTmp.csv    "\n"
-    \    ${scroll_count}=    Run Keyword if    int(${row})>=30    getScrollCount    ${row}
-    \    Run Keyword if    int(${row})>29    refreshTable    ${scroll_count}    4
+    \    #${scroll_count}=    Run Keyword if    int(${row})>=30    getScrollCount    ${row}
+    \    #Run Keyword if    int(${row})>29    refreshTable    ${scroll_count}    4
     \    #Sleep    1
 
 checkFilters
-    [Arguments]    ${tab}    ${page_rows}    ${table_column}   ${filter_data}
+    [Arguments]    ${tab}    ${page_rows}    ${table_column}    ${filter_data}
     Sleep    4
     ${rows}=    Set Variable    ${page_rows}
     log    Row Count = ${rows}    WARN
     : FOR    ${row}    IN RANGE    0    ${rows}
     \    ${data}=    Get Text    //md-tab-content[${tab}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[@row="${row}"]/div[${table_column}]/span/span
     \    Should Be Equal    ${data}    ${filter_data}
-    \    ${scroll_count}=    Run Keyword if    int(${row})>=30    getScrollCount    ${row}
-    \    Run Keyword if    int(${row})>29    refreshTable    ${scroll_count}    2
+    \    ${scroll_count}=    Run Keyword if    int(${row})>=30 and int(${tab})==2 and int(${tab})==3    getScrollCount    ${row}
+    \    Run Keyword if    int(${row})>29 and int(${tab})==2 and int(${tab})==3    refreshTable    ${scroll_count}    2
 
 getTableRow
     sleep    4
