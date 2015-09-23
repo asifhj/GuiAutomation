@@ -27,11 +27,11 @@ ${CONTRACT_FILTER_DATA_TAB}    C1-3624326689
 ${INVENTORY_FILTER_DATA_TAB}    Chassis
 ${FRU_FILTER_DATA_TAB}    mx480
 ${SOFTWARE_ANALYSIS_FILTER_DATA_TAB}    mx480
-${EOL_FILTER_DATA_TAB}    2
+${EOL_FILTER_DATA_TAB}    EX4200
 
 *** Test Cases ***
 abc
-    [Tags]    abc
+    [Tags]    no
     Close All Browsers
     Selenium2Library.Open Browser    http://localhost/a.html
     sleep    2
@@ -40,7 +40,7 @@ abc
     log    ${a}
 
 def
-    [Tags]    w
+    [Tags]    no
     Prepare File For Inventory Mapping    ${REPORTDIR}${CUSTOMERNAME}-WebTestingInventoryTmp.csv
     Compare Inventory    ${REPORTDIR}${CUSTOMERNAME}-WebTestingInventory.csv    ${REPODIR}${CUSTOMERNAME}_inventory.csv
 
@@ -326,10 +326,10 @@ Verify INVENTORY Filtering based on Module
     ${Description}=    Get Text    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div/div/div[@id="center"]/div/div/div/div/div/div/div[12]/div[2]/span[2]
     ${count}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[1]/span[3]
     ${pages}=    Get Text    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/span[2]
-    Log    pages = ${pages}    WARN
     ${next}=    Set Variable    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
     ${previous}=    Set Variable    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[2]
 
+    log    pages = ${pages}    WARN
     : FOR    ${page}    IN RANGE    0    ${pages}
     \    Log    Getting Page Rows Count    WARN
     \    ${page_rows}    Run Keyword    getPageRows    ${INVENTORY_TAB}
@@ -341,10 +341,12 @@ Verify INVENTORY Filtering based on Module
     \    log    Moving to next page    WARN
     \    Comment    Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
     \    Selenium2Library.Execute Javascript    var result = document.evaluate("${next}",document,null,XPathResult.FIRST_ORDERED_NODE_TYPE,null);var evt = document.createEvent("MouseEvents");evt.initMouseEvent("click", true, true, window,0, 0, 0, 0, 0, false, false, false, false, 0, null);var element = result.singleNodeValue;element.dispatchEvent(evt);
+
     Log    Going back to first page....    WARN
     : FOR    ${page}    IN RANGE    0    ${pages}
     \    Selenium2Library.Execute Javascript    var result = document.evaluate("${previous}",document,null,XPathResult.FIRST_ORDERED_NODE_TYPE,null);var evt = document.createEvent("MouseEvents");evt.initMouseEvent("click", true, true, window,0, 0, 0, 0, 0, false, false, false, false, 0, null);var element = result.singleNodeValue;element.dispatchEvent(evt);
-    Log    Clearing Filters
+
+    Log    Clearing Filters....     WARN
     Click Element    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[${INVENTORY_FILTER_COLUMN_TAB}]/span
     Sleep    5
     Wait Until Element Is Visible    //md-tab-content[@id="tab-content-2"]/div/div/md-content/div/md-content/div/div/div/div[@id="borderLayout_eRootPanel"]/div[3]    timeout=5
@@ -375,6 +377,7 @@ Verify INVENTORY Data
     ${next}=    Set Variable    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
     ${previous}=    Set Variable    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[2]
 
+    log    pages = ${pages}    WARN
     : FOR    ${page}    IN RANGE    0    ${pages}
     \    Log    Clicking Menu For Expanding Rows    WARN
     \    Mouse Over    //md-tab-content[${INVENTORY_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-trigger/button
@@ -401,6 +404,10 @@ Verify INVENTORY Data
     \    #Run Keyword If    ${page}>=1    Exit For Loop
     Prepare File For Inventory Mapping    ${REPORTDIR}${CUSTOMERNAME}-WebTestingInventoryTmp.csv
     Compare Inventory    ${REPORTDIR}${CUSTOMERNAME}-WebTestingInventory.csv    ${REPODIR}${CUSTOMERNAME}_inventory.csv
+
+    Log    Going back to first page....    WARN
+    : FOR    ${page}    IN RANGE    0    ${pages}
+    \    Selenium2Library.Execute Javascript    var result = document.evaluate("${previous}",document,null,XPathResult.FIRST_ORDERED_NODE_TYPE,null);var evt = document.createEvent("MouseEvents");evt.initMouseEvent("click", true, true, window,0, 0, 0, 0, 0, false, false, false, false, 0, null);var element = result.singleNodeValue;element.dispatchEvent(evt);
 
 Verify INVENTORY Columns Settings Menu
     [Tags]    ic
@@ -564,6 +571,9 @@ Verify FRU TO CHASSIS MAP Filtering based on "Parent Chassis Type"
     ${Component Model Number}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[6]/div[2]/span[2]
     ${count}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[1]/span[3]
     ${pages}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/span[2]
+    ${next}=    Set Variable    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
+    ${previous}=    Set Variable    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[2]
+
     log    pages = ${pages}    WARN
     : FOR    ${page}    IN RANGE    0    ${pages}
     \    Log    Getting Page Rows Count    WARN
@@ -573,14 +583,23 @@ Verify FRU TO CHASSIS MAP Filtering based on "Parent Chassis Type"
     \    ${tmp}    Evaluate    ${page}+1
     \    Run keyword If    ${tmp}==${pages}    Exit For Loop
     \    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
-    #\    Run Keyword If    ${page}<=${pages}+1    Exit For Loop
+
+    Log    Going back to first page....    WARN
+    : FOR    ${page}    IN RANGE    0    ${pages}
+    \    Selenium2Library.Execute Javascript    var result = document.evaluate("${previous}",document,null,XPathResult.FIRST_ORDERED_NODE_TYPE,null);var evt = document.createEvent("MouseEvents");evt.initMouseEvent("click", true, true, window,0, 0, 0, 0, 0, false, false, false, false, 0, null);var element = result.singleNodeValue;element.dispatchEvent(evt);
+
+    Log    Clearing Filters....    WARN
+    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[${FRU_FILTER_COLUMN_TAB}]/span
+    Sleep    5
+    Wait Until Element Is Visible    //md-tab-content[@id="tab-content-4"]/div/div/md-content/div/md-content/div/div/div/div[@id="borderLayout_eRootPanel"]/div[3]    timeout=5
+    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[3]/div/div[3]/button[2]
+
 
 Verify FRU TO CHASSIS MAP Data
     [Tags]    fd
     Click Element    //md-tab-item[3][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
     Sleep    5
     Create File    ${REPORTDIR}${CUSTOMERNAME}-WebTestingFRUTmp.csv
-    #Append To File    ${REPORTDIR}${CUSTOMERNAME}-WebTestingFRUTmp.csv    [u'Parent Chassis Name', u'Parent Chassis Serial Number', u'Parent Chassis Type', u'Component Serial Number', u'Component Part Number', u'Component Model Number']
     ${Parent Chassis Name}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[1]/div[2]/span[4]
     ${Parent Chassis Serial Number}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[2]/div[2]/span[2]
     ${Parent Chassis Type}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[3]/div[2]/span[2]
@@ -589,6 +608,10 @@ Verify FRU TO CHASSIS MAP Data
     ${Component Model Number}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[6]/div[2]/span[2]
     ${count}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[1]/span[3]
     ${pages}=    Get Text    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/span[2]
+    ${next}=    Set Variable    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
+    ${previous}=    Set Variable    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[2]
+
+    Log    pages = ${pages}    WARN
     : FOR    ${page}    IN RANGE    0    ${pages}
     \    Log    Clicking Menu For Expanding Rows    WARN
     \    Mouse Over    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-trigger/button
@@ -612,9 +635,12 @@ Verify FRU TO CHASSIS MAP Data
     \    Sleep    5
     \    Click Element    //md-tab-content[${FRU_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
     \    Sleep    3
-    \    #Run Keyword If    ${page}>=1    Exit For Loop
     Prepare File For FRU Mapping    ${REPORTDIR}${CUSTOMERNAME}-WebTestingFRUTmp.csv
     Compare FRU To Chassis    ${REPORTDIR}${CUSTOMERNAME}-WebTestingFRU.csv    ${REPODIR}${CUSTOMERNAME}_FRU-to-Chassis.csv
+
+    Log    Going back to first page....    WARN
+    : FOR    ${page}    IN RANGE    0    ${pages}
+    \    Selenium2Library.Execute Javascript    var result = document.evaluate("${previous}",document,null,XPathResult.FIRST_ORDERED_NODE_TYPE,null);var evt = document.createEvent("MouseEvents");evt.initMouseEvent("click", true, true, window,0, 0, 0, 0, 0, false, false, false, false, 0, null);var element = result.singleNodeValue;element.dispatchEvent(evt);
 
 Verify FRU TO CHASSIS MAP Columns Settings Menu
     [Tags]    fc
@@ -674,7 +700,7 @@ Verify FRU TO CHASSIS MAP Enabling All Columns
     Sleep    3
 
 Verify SOFTWARE ANALYSIS Table Header Information
-    [Tags]    sc
+    [Tags]    sh
     Click Element    //md-tab-item[${SOFTWARE_ANALYSIS_TAB}][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
     Sleep    5
     ${Device Name}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[1]/div[2]/span[4]
@@ -706,6 +732,9 @@ Verify SOFTWARE ANALYSIS Filtering based on "Product"
     ${Junos Version}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[5]/div[2]/span[2]
     ${count}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[1]/span[3]
     ${pages}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/span[2]
+    ${next}=    Set Variable    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
+    ${previous}=    Set Variable    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[2]
+
     log    pages = ${pages}    WARN
     : FOR    ${page}    IN RANGE    0    ${pages}
     \    Log    Getting Page Rows Count    WARN
@@ -715,10 +744,18 @@ Verify SOFTWARE ANALYSIS Filtering based on "Product"
     \    ${tmp}    Evaluate    ${page}+1
     \    Run keyword If    ${tmp}==${pages}    Exit For Loop
     \    Click Element    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
-    #\    Run Keyword If    ${page}<=${pages}+1    Exit For Loop
+
+    Log    Going back to first page....    WARN
+    : FOR    ${page}    IN RANGE    0    ${pages}
+    \    Selenium2Library.Execute Javascript    var result = document.evaluate("${previous}",document,null,XPathResult.FIRST_ORDERED_NODE_TYPE,null);var evt = document.createEvent("MouseEvents");evt.initMouseEvent("click", true, true, window,0, 0, 0, 0, 0, false, false, false, false, 0, null);var element = result.singleNodeValue;element.dispatchEvent(evt);
+    Log    Clearing Filters
+    Click Element    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[${SOFTWARE_ANALYSIS_FILTER_COLUMN_TAB}]/span
+    Sleep    5
+    Wait Until Element Is Visible    //md-tab-content[@id="tab-content-4"]/div/div/md-content/div/md-content/div/div/div/div[@id="borderLayout_eRootPanel"]/div[3]    timeout=5
+    Click Element    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[3]/div/div[3]/button[2]
 
 Verify SOFTWARE ANALYSIS Data
-    [Tags]    s
+    [Tags]    sd
     Click Element    //md-tab-item[4][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
     Sleep    5
     Create File    ${REPORTDIR}${CUSTOMERNAME}-WebTestingSoftwareAnalysisTmp.csv
@@ -730,6 +767,10 @@ Verify SOFTWARE ANALYSIS Data
     ${Junos Version}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div[4]/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[5]/div[2]/span[2]
     ${count}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[1]/span[3]
     ${pages}=    Get Text    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/span[2]
+    ${next}=    Set Variable    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
+    ${previous}=    Set Variable    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[2]
+
+    log    pages = ${pages}    WARN
     : FOR    ${page}    IN RANGE    0    ${pages}
     \    Log    Getting Page Rows Count    WARN
     \    ${page_rows}    Run Keyword    getPageRows    4
@@ -744,6 +785,11 @@ Verify SOFTWARE ANALYSIS Data
     \    #Run Keyword If    ${page}>=1    Exit For Loop
     Prepare File For Software Analysis Mapping    ${REPORTDIR}${CUSTOMERNAME}-WebTestingSoftwareAnalysisTmp.csv
     Compare Software Analysis    ${REPORTDIR}${CUSTOMERNAME}-WebTestingSoftwareAnalysis.csv    ${REPODIR}${CUSTOMERNAME}_software_analysis.csv
+
+    Log    Going back to first page....    WARN
+    : FOR    ${page}    IN RANGE    0    ${pages}
+    \    Selenium2Library.Execute Javascript    var result = document.evaluate("${previous}",document,null,XPathResult.FIRST_ORDERED_NODE_TYPE,null);var evt = document.createEvent("MouseEvents");evt.initMouseEvent("click", true, true, window,0, 0, 0, 0, 0, false, false, false, false, 0, null);var element = result.singleNodeValue;element.dispatchEvent(evt);
+
 
 Verify SOFTWARE ANALYSIS Columns Settings Menu
     [Tags]    sc
@@ -797,7 +843,220 @@ Verify SOFTWARE ANALYSIS Enabling All Columns
     Click Element    //md-tab-content[${SOFTWARE_ANALYSIS_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span/span[1]
     Sleep    3
 
+Verify EOL Table Header Information
+    [Tags]    eh
+    Click Element    //md-tab-item[${EOL_TAB}][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
+    Sleep    5
+    ${Device}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[1]/div[2]/span[4]
+    ${Product}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[2]/div[2]/span[2]
+    ${Serial Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[3]/div[2]/span[2]
+    ${Part Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[4]/div[2]/span[2]
+    ${Model Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[5]/div[2]/span[2]
+    ${EOL Engg H/W Date}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[6]/div[2]/span[2]
+    ${EOL Engg S/W Date}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[7]/div[2]/span[2]
+    ${EOL Sale Date}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[8]/div[2]/span[2]
+    ${EOL Service Date}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[9]/div[2]/span[2]
+    ${EOL Announcement}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[10]/div[2]/span[2]
+    ${Top Level Assembly Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[11]/div[2]/span[2]
+    ${PSN Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[12]/div[2]/span[2]
+    ${Replacement Model Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[13]/div[2]/span[2]
+    Sleep    2
+    Should Be Equal    ${Device}    Device
+    Should Be Equal    ${Product}    Product
+    Should Be Equal    ${Serial Number}    Serial Number
+    Should Be Equal    ${Part Number}    Part Number
+    Should Be Equal    ${Model Number}    Model Number
+    Should Be Equal    ${EOL Engg H/W Date}    EOL - Engg H/W Date
+    Should Be Equal    ${EOL Engg S/W Date}    EOL - Engg S/W Date
+    Should Be Equal    ${EOL Sale Date}    EOL - Sale Date
+    Should Be Equal    ${EOL Service Date}    EOL - Service Date
+    Should Be Equal    ${EOL Announcement}    EOL - Announcement Date
+    Should Be Equal    ${Top Level Assembly Number}    Top Level Assembly Number
+    Should Be Equal    ${PSN Number}    PSN Number
+    Should Be Equal    ${Replacement Model Number}    Replacement Model Number
+
+Verify EOL Filtering based on Module
+    [Tags]    ef
+    Click Element    //md-tab-item[${EOL_TAB}][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
+    Sleep    5
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[${EOL_FILTER_COLUMN_TAB}]/span
+    Sleep    5
+    Input Text    //div[@id="borderLayout_eRootPanel"]/div[3]/div/div[2]/input    ${EOL_FILTER_DATA_TAB}
+    Click Button    //div[@id="borderLayout_eRootPanel"]/div[3]/div/div[3]/button[1]
+    Sleep    5
+    ${Device}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[1]/div[2]/span[4]
+    ${Product}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[2]/div[2]/span[2]
+    ${Serial Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[3]/div[2]/span[2]
+    ${Part Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[4]/div[2]/span[2]
+    ${Model Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[5]/div[2]/span[2]
+    ${EOL Engg H/W Date}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[6]/div[2]/span[2]
+    ${EOL Engg S/W Date}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[7]/div[2]/span[2]
+    ${EOL Sale Date}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[8]/div[2]/span[2]
+    ${EOL Service Date}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[9]/div[2]/span[2]
+    ${EOL Announcement}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[10]/div[2]/span[2]
+    ${Top Level Assembly Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[11]/div[2]/span[2]
+    ${PSN Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[12]/div[2]/span[2]
+    ${Replacement Model Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[13]/div[2]/span[2]
+    ${count}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[1]/span[3]
+    ${pages}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/span[2]
+    Log    pages = ${pages}    WARN
+    ${next}=    Set Variable    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
+    ${previous}=    Set Variable    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[2]
+
+    : FOR    ${page}    IN RANGE    0    ${pages}
+    \    Log    Getting Page Rows Count    WARN
+    \    ${page_rows}    Run Keyword    getPageRows    ${EOL_TAB}
+    \    Log    Page ${page} contains ${page_rows} rows    WARN
+    \    log    Validating page ${page} data...    WARN
+    \    checkFilters    ${EOL_TAB}    ${page_rows}    ${EOL_FILTER_COLUMN_TAB}    ${EOL_FILTER_DATA_TAB}
+    \    ${tmp}    Evaluate    ${page}+1
+    \    Run keyword If    ${tmp}==${pages}    Exit For Loop
+    \    log    Moving to next page    WARN
+    \    Comment    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
+    \    Selenium2Library.Execute Javascript    var result = document.evaluate("${next}",document,null,XPathResult.FIRST_ORDERED_NODE_TYPE,null);var evt = document.createEvent("MouseEvents");evt.initMouseEvent("click", true, true, window,0, 0, 0, 0, 0, false, false, false, false, 0, null);var element = result.singleNodeValue;element.dispatchEvent(evt);
+    Log    Going back to first page....    WARN
+    : FOR    ${page}    IN RANGE    0    ${pages}
+    \    Selenium2Library.Execute Javascript    var result = document.evaluate("${previous}",document,null,XPathResult.FIRST_ORDERED_NODE_TYPE,null);var evt = document.createEvent("MouseEvents");evt.initMouseEvent("click", true, true, window,0, 0, 0, 0, 0, false, false, false, false, 0, null);var element = result.singleNodeValue;element.dispatchEvent(evt);
+    Log    Clearing Filters
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[${EOL_FILTER_COLUMN_TAB}]/span
+    Sleep    5
+    Wait Until Element Is Visible    //md-tab-content[@id="tab-content-5"]/div/div/md-content/div/md-content/div/div/div/div[@id="borderLayout_eRootPanel"]/div[3]    timeout=5
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[3]/div/div[3]/button[2]
+
+Verify EOL Data
+    [Tags]    ed
+    Click Element    //md-tab-item[${EOL_TAB}][starts-with(@class, 'md-tab ng-scope ng-isolate-scope')]/span[@class='ng-scope']
+    Sleep    5
+    Create File    ${REPORTDIR}${CUSTOMERNAME}-WebTestingEOLTmp.csv
+    #Append To File    ${REPORTDIR}${CUSTOMERNAME}-WebTestingEOLTmp.csv    [u'Device Name', u'Module', u'Sub_Module', u'Sub_Sub_Module', u'Sub_Sub_Sub_Module', u'Part Number', u'Revision', u'Model Number', u'Serial Number', u'Description']
+    ${Device}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[1]/div[2]/span[4]
+    ${Product}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[2]/div[2]/span[2]
+    ${Serial Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[3]/div[2]/span[2]
+    ${Part Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[4]/div[2]/span[2]
+    ${Model Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[5]/div[2]/span[2]
+    ${EOL Engg H/W Date}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[6]/div[2]/span[2]
+    ${EOL Engg S/W Date}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[7]/div[2]/span[2]
+    ${EOL Sale Date}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[8]/div[2]/span[2]
+    ${EOL Service Date}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[9]/div[2]/span[2]
+    ${EOL Announcement}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[10]/div[2]/span[2]
+    ${Top Level Assembly Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[11]/div[2]/span[2]
+    ${PSN Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[12]/div[2]/span[2]
+    ${Replacement Model Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/div[13]/div[2]/span[2]
+    ${count}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[1]/span[3]
+    ${pages}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/span[2]
+    ${next}=    Set Variable    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[3]
+    ${previous}=    Set Variable    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[2]/div/span[2]/button[2]
+
+    : FOR    ${page}    IN RANGE    0    ${pages}
+    \    Log    Getting Page Rows Count    WARN
+    \    ${page_rows}    Run Keyword    getPageRows    ${EOL_TAB}
+    \    Log    TotalPageRows = ${page_rows}    WARN
+    \    Log    Getting Page Rows    WARN
+    \    Run Keyword    getEOLDivTableRow    ${page_rows}
+    \    Sleep    3
+    \    Log    Loading ${page} Page    WARN
+    \    Sleep    5
+    \    Selenium2Library.Execute Javascript    var result = document.evaluate("${next}",document,null,XPathResult.FIRST_ORDERED_NODE_TYPE,null);var evt = document.createEvent("MouseEvents");evt.initMouseEvent("click", true, true, window,0, 0, 0, 0, 0, false, false, false, false, 0, null);var element = result.singleNodeValue;element.dispatchEvent(evt);
+    \    Sleep    3
+    Log    Going back to first page....    WARN
+    : FOR    ${page}    IN RANGE    0    ${pages}
+    \    Selenium2Library.Execute Javascript    var result = document.evaluate("${previous}",document,null,XPathResult.FIRST_ORDERED_NODE_TYPE,null);var evt = document.createEvent("MouseEvents");evt.initMouseEvent("click", true, true, window,0, 0, 0, 0, 0, false, false, false, false, 0, null);var element = result.singleNodeValue;element.dispatchEvent(evt);
+
+
+Verify EOL Columns Settings Menu
+    [Tags]    ec
+    Sleep    4
+    Mouse Over    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-trigger/button
+    #Wait Until Element Is Visible    //md-content[@class="md-default-theme"]/div[4]/div[2]/md-fab-speed-dial/md-fab-actions/div[2]/button
+    Sleep    4
+    ${Column_settings_button}    Set Variable    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[2]/md-fab-speed-dial/md-fab-actions/div[2]/button
+    Selenium2Library.Execute Javascript    var result = document.evaluate("${Column_settings_button}",document,null,XPathResult.FIRST_ORDERED_NODE_TYPE,null);var evt = document.createEvent("MouseEvents");evt.initMouseEvent("click", true, true, window,0, 0, 0, 0, 0, false, false, false, false, 0, null);var element = result.singleNodeValue;element.dispatchEvent(evt);
+    Sleep    4
+    ${settings_columns_header}    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[1]/div/div
+    ${Device}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span/span[2]
+    ${Product}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[2]/span/span[2]
+    ${Serial Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[3]/span/span[2]
+    ${Part Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[4]/span/span[2]
+    ${Model Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span/span[2]
+    ${EOL Engg H/W Date}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[6]/span/span[2]
+    ${EOL Engg S/W Date}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[7]/span/span[2]
+    ${EOL Sale Date}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[8]/span/span[2]
+    ${EOL Service Date}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[9]/span/span[2]
+    ${EOL Announcement}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[10]/span/span[2]
+    ${Top Level Assembly Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[11]/span/span[2]
+    ${PSN Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[12]/span/span[2]
+    ${Replacement Model Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[13]/span/span[2]
+    Should Be Equal    ${Device}    Device
+    Should Be Equal    ${Product}    Product
+    Should Be Equal    ${Serial Number}    Serial Number
+    Should Be Equal    ${Part Number}    Part Number
+    Should Be Equal    ${Model Number}    Model Number
+    Should Be Equal    ${EOL Engg H/W Date}    EOL - Engg H/W Date
+    Should Be Equal    ${EOL Engg S/W Date}    EOL - Engg S/W Date
+    Should Be Equal    ${EOL Sale Date}    EOL - Sale Date
+    Should Be Equal    ${EOL Service Date}    EOL - Service Date
+    Should Be Equal    ${EOL Announcement}    EOL - Announcement Date
+    Should Be Equal    ${Top Level Assembly Number}    Top Level Assembly Number
+    Should Be Equal    ${PSN Number}    PSN Number
+    Should Be Equal    ${Replacement Model Number}    Replacement Model Number
+
+Verify EOL Disabling All Columns
+    [Tags]    ec
+    # Disabling all columns
+    Log    Disabling all columns
+    Sleep    4
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span/span[1]
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[2]/span/span[1]
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[3]/span/span[1]
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[4]/span/span[1]
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span/span[1]
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[6]/span/span[1]
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[7]/span/span[1]
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[8]/span/span[1]
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[9]/span/span[1]
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[10]/span/span[1]
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[11]/span/span[1]
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[12]/span/span[1]
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[13]/span/span[1]
+    Sleep    3
+    ${settings_columns_header}    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[1]/div/div
+    Sleep    2
+    Should Be Equal    ${settings_columns_header}    Columns
+    Sleep    3
+
+Verify EOL Enabling All Columns
+    [Tags]    ec
+    Log    Enable all columns
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[2]/span
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[3]/span
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[4]/span
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[6]/span
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[7]/span
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[8]/span
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[9]/span
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[10]/span
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[11]/span
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[12]/span
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[13]/span
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[1]/span/span[1]
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[2]/span/span[1]
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[3]/span/span[1]
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[4]/span/span[1]
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[5]/span/span[1]
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[6]/span/span[1]
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[7]/span/span[1]
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[8]/span/span[1]
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[9]/span/span[1]
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[10]/span/span[1]
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[11]/span/span[1]
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[12]/span/span[1]
+    Click Element    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[1]/div/div/div[2]/div/div/div/div[13]/span/span[1]
+
+
 Verify Graph
+    [Tags]    no
     Comment    Mouse Over    //*/div[@id='pieChart']
     Sleep    3
     Comment    Selenium2Library.Wait Until Element Is Visible    xpath=/html/body/div/div/div/div[2]/div/div/div/div[2]/adf-widget-content/md-tabs/md-tabs-content-wrapper/md-tab-content[1]/div/md-content/div[2]/div[1]/div[1]/svg
@@ -813,12 +1072,14 @@ Verify Graph
     \    ${LOG_FILE}    ${model}    ${number}
 
 Logout and Close
+    [Tags]    no
     Unselect Frame
     Click Link    xpath=/html/body/div[2]/div/table/tbody/tr[2]/td/a
     Wait Until Page Contains    Login    timeout=10
     Close Browser
 
 SendMail
+    [Tags]    no
     Prepare Report For Email    Juniper    C:/tmp
     Send Mail With Attachment    pbiswas@juniper.net    pbiswas@juniper.net    Automation Test Results    Please find the attached results    C:/tmp/RIDE-report.zip
 
@@ -959,9 +1220,35 @@ getSoftwareAnalysisDivTableRow
     \    ...    ${Platform}
     \    Append To File    ${REPORTDIR}${CUSTOMERNAME}-WebTestingSoftwareAnalysisTmp.csv    ${record}[0]
     \    Append To File    ${REPORTDIR}${CUSTOMERNAME}-WebTestingSoftwareAnalysisTmp.csv    "\n"
-    \    #${scroll_count}=    Run Keyword if    int(${row})>=30    getScrollCount    ${row}
-    \    #Run Keyword if    int(${row})>29    refreshTable    ${scroll_count}    4
-    \    #Sleep    1
+
+getEOLDivTableRow
+    [Arguments]    ${page_rows}
+    Sleep    4
+    ${rows}=    Set Variable    ${page_rows}
+    ${cols}=    Set Variable    12
+    log    Row Count = ${rows}    WARN
+    log    Col Count = ${cols}    WARN
+    : FOR    ${row}    IN RANGE    0    ${rows}
+    \    Log    Rows= ${rows}
+    \    Log    RowNo= ${row}    WARN
+    \    ${Device}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[@row="${row}"]/div[1]/span/span
+    \    ${Product}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[@row="${row}"]/div[2]/span/span
+    \    ${Serial number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[@row="${row}"]/div[3]/span/span
+    \    ${Part Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[@row="${row}"]/div[4]/span/span
+    \    ${Model Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[@row="${row}"]/div[5]/span/span
+    \    ${EOL Engg H/W Date}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[@row="${row}"]/div[6]/span/span
+    \    ${EOL Engg S/W Date}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[@row="${row}"]/div[7]/span/span
+    \    ${EOL Sale Date}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[@row="${row}"]/div[8]/span/span
+    \    ${EOL Service Date}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[@row="${row}"]/div[9]/span/span
+    \    ${EOL Announcement}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[@row="${row}"]/div[10]/span/span
+    \    ${Top Level Assembly Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[@row="${row}"]/div[11]/span/span
+    \    ${PSN Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[@row="${row}"]/div[12]/span/span
+    \    ${Replacement Model Number}=    Get Text    //md-tab-content[${EOL_TAB}]/div/div/md-content/div/md-content/div/div[1]/div/div/div[1]/div[2]/div/div[1]/div/div[2]/div[2]/div/div/div[@row="${row}"]/div[13]/span/span
+    \    ${record}=    Create List    ${Device}    ${Product}    ${Part Number}    ${Model Number}
+    \    ...    ${EOL Engg H/W Date}    ${EOL Engg S/W Date}    ${EOL Sale Date}    ${EOL Service Date}    ${EOL Announcement}
+    \    ...    ${Top Level Assembly Number}    ${PSN Number}    ${Replacement Model Number}
+    \    Append To File    ${REPORTDIR}${CUSTOMERNAME}-WebTestingEOLTmp.csv    ${record}[0]
+    \    Append To File    ${REPORTDIR}${CUSTOMERNAME}-WebTestingEOLTmp.csv    "\n"
 
 checkFilters
     [Arguments]    ${tab}    ${page_rows}    ${table_column}    ${filter_data}
